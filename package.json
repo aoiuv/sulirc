@@ -1,0 +1,13 @@
+{
+  "name": "xblog",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/soulizs/xblog.git",
+  "author": "soulizs <ygj2awww@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "koa": "^2.7.0",
+    "lodash": "^4.17.11",
+    "ramda": "^0.26.1"
+  }
+}
