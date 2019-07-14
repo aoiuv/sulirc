@@ -5,9 +5,18 @@
   "repository": "https://github.com/soulizs/xblog.git",
   "author": "soulizs <ygj2awww@gmail.com>",
   "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "mnode": "node --experimental-modules $script"
+  },
   "dependencies": {
     "koa": "^2.7.0",
     "lodash": "^4.17.11",
     "ramda": "^0.26.1"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.5.0",
+    "@babel/core": "^7.5.4",
+    "@babel/preset-env": "^7.5.4"
   }
 }

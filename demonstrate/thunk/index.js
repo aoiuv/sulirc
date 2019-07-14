@@ -1,0 +1,1 @@
+const compose = require('./compose');
