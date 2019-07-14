@@ -85,35 +85,3 @@ const middlewares = [
 ];
 
 compose(...middlewares)({});
-
-// let _th1 = (ctx, next) => {
-//   th1(text => {
-//     ctx.text1 = text;
-//     output(text);
-//     next();
-//   });
-// };
-
-// let _th2 = (ctx, next) => {
-//   th2(text => {
-//     ctx.text2 = text;
-//     output(text);
-//     next();
-//   });
-// };
-
-// let _th3 = (ctx, next) => {
-//   th3(text => {
-//     ctx.text3 = text;
-//     output(text);
-//     output("Complete!");
-//     console.log(ctx);
-//     next();
-//   });
-// };
-
-// compose(
-//   _th1,
-//   _th2,
-//   _th3
-// )({});
