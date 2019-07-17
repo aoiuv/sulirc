@@ -10,6 +10,7 @@
     "mnode": "node --experimental-modules $script"
   },
   "dependencies": {
+    "co": "^4.6.0",
     "koa": "^2.7.0",
     "lodash": "4.17.14",
     "ramda": "^0.26.1"

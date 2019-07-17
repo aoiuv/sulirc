@@ -61,6 +61,8 @@ compose(...getFiles);
 
 Promise is a time independent wrapper around a value
 
+### callback hell & Promise hell
+
 ### Generators
 
 ## 关于请求
