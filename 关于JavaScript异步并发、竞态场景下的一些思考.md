@@ -10,8 +10,9 @@
 2. 是不是高效的解决方式？
 3. 覆盖到所有异常情况了么？
 4. 多个异步发生时，如何处理依赖关系？
-5. 能不能更加优雅的解决这个问题？（笑
-6. 有哪些方案备选？
+5. 能不能更加优雅的解决这个问题？
+6. 关于异步与竞态的场景有哪些？
+7. 有哪些方案以及工具可以帮助我们？
 
 ## 背景
 
@@ -194,11 +195,43 @@ co(loadFiles);
 
 <!-- @TODO -->
 
+## 关于请求
+
+### 为什么需要取消请求
+
+### 取消一个 GET 请求？
+
+### 取消一个 POST 请求？
+
+## 关于响应式界面
+
+响应式界面 = 乐观更新 + 副本 + 操作队列
+
+实现目标
+
+- 保证最终状态正确
+- 防止数据丢失
+- 更响应式的界面
+
+## 关于工具
+
+### redux-saga
+
+### RxJS
+
 ## 小结
+
+以上。对大家如有助益，不胜荣幸。
 
 ## 参考资料
 
 - [what-is-a-thunk](https://daveceddia.com/what-is-a-thunk/)
 - [Stack Overflow: Dispatching Redux Actions with a Timeout](https://stackoverflow.com/questions/35411423/how-to-dispatch-a-redux-action-with-a-timeout/35415559#35415559)
 - [Stack Overflow: Why do we need middleware for async flow in Redux?](https://stackoverflow.com/questions/34570758/why-do-we-need-middleware-for-async-flow-in-redux/34599594#34599594)
-- 《深入理解 ES6》
+- [co](https://github.com/tj/co)
+- [ES6 Generators: Complete Series](https://davidwalsh.name/es6-generators)
+- [3 cases where JavaScript generators rock (+ understanding them)](https://goshakkk.name/javascript-generators-understanding-sample-use-cases/)
+- [the-definitive-guide-to-the-javascript-generators](https://github.com/gajus/gajus.com-blog/blob/master/posts/the-definitive-guide-to-the-javascript-generators/index.md)
+- [ES6 generators in depth](https://2ality.com/2015/03/es6-generators.html)
+- [Race Conditions in JavaScript Apps by Thai Pangsakulyanont | JSConf.Asia 2019](https://www.youtube.com/watch?v=DWZj56qUNfs&feature=push-sd&attr_tag=_-nKBHAQrlEqNBVw%3A6)
+- [redux-thunk](https://github.com/reduxjs/redux-thunk)
