@@ -2,17 +2,9 @@
 
 > 时间是程序里最复杂的因素
 
-为什么写这篇文章，笔者最近遭遇了一些异步问题（稍后会阐述），总觉得自己在野蛮解决这类问题。写着写着总觉得不妥~于是决定研究学习一下相关解决方案~
+编写 Web 应用的时候，一般来说，我们大多时候处理的都是同步的、线性的业务逻辑。但是正如开篇所说的“时间是程序里最复杂的因素”，应用一旦复杂，往往会遭遇很多异步问题，如果代码中涉及到到多个异步的时候，这时候就需要慎重考虑了，我们需要的意识到的是：
 
-一般来说，我们大多时候处理的都是同步的、线性的。但是正如开篇所说的“时间是程序里最复杂的因素”，如果代码中牵扯到异步的时候，这时候就需要慎重考虑了，我们需要的意识到的是：
-
-1. 到底我们的异步是可维护的么？
-2. 是不是高效的解决方式？
-3. 覆盖到所有异常情况了么？
-4. 多个异步发生时，如何处理依赖关系？
-5. 能不能更加优雅的解决这个问题？
-6. 关于异步与竞态的场景有哪些？
-7. 有哪些方案以及工具可以帮助我们？
+到底我们的异步逻辑是易读的么？可维护的么？哪些是并发场景，哪些是竞态场景，我们有什么对策么？以下我将抛出我发现的几种方案，注意提提神！以下全程需要集中精神思考 🤔
 
 ## 背景
 
@@ -39,7 +31,7 @@ function output(text) {
 }
 ```
 
-那么如何实现一个 getFile 函数，使得可以并行请求，然后依照请求顺序打印响应的值，最终异步完成后打印完成。
+那么如何实现一个 getFile 函数，使得可以并行请求，然后依照请求顺序打印响应的值，最终异步完成后打印完成。（注意，此处考虑并发场景）
 
 ```js
 getFile("file1");
@@ -64,9 +56,7 @@ get files total time: 8247.093ms
 
 ### 什么是 Thunk
 
-Thunk 这个词是起源于“思考”的幽默过去式。它
-
-A thunk is a function that wraps an expression to delay its evaluation.
+Thunk 这个词是起源于“思考”的幽默过去式的意思。它本质上就是一个延迟执行计算的函数。比如下述：
 
 ```js
 // 对于下述 1 + 2 计算是即时的
@@ -78,6 +68,8 @@ let x = 1 + 2;
 // 所以函数 foo 就是一个 thunk
 let foo = () => 1 + 2;
 ```
+
+那么我们来实现一个 getFile 函数如下：
 
 ```js
 function getFile(file) {
@@ -95,33 +87,96 @@ function getFile(file) {
 }
 ```
 
+注意我们如上有一个很有趣的实现，实际上在调用 getFile 函数的时候，内部就已经发生了 ajax 请求（因此请求并没有被阻塞），但是真正返回响应的逻辑放在了 thunk 中。
+
+因此，业务逻辑如下：
+
+```js
+let thunk1 = getFile("file1");
+let thunk2 = getFile("file2");
+let thunk3 = getFile("file3");
+
+thunk1(text => {
+  output(text);
+  thunk2(text => {
+    output(text);
+    thunk3(text => {
+      output(text);
+      output("Complete!");
+    });
+  });
+});
+```
+
+调用后，很好实现了我们的需求！但是！但是同学们也发现了，还是难免陷入了回调地狱，写法还是不好维护，换而言之，还是不够优雅~
+
+嗯...有什么办法呢？
+
 ### 中间件
 
+近几年，中间件的思想和使用十分流行，或者我们可以尝试使用中间件方式实现一下？
+
+首先我们写一个简单的 compose 函数如下（当然此场景下我们并不关注中间件的上下文，因此简化其实现）：
+
 ```js
-function compose(...funcs) {
-  if (funcs.length === 0) {
-    return arg => arg;
-  }
-
-  if (funcs.length === 1) {
-    return funcs[0];
-  }
-
-  return funcs.reduce((a, b) => (...args) => a(b(...args)));
+function compose(...mdws) {
+  return () => {
+    function next() {
+      const mdw = mdws.shift();
+      mdw && mdw(next);
+    }
+    mdws.shift()(next);
+  };
 }
 ```
 
-结合中间件来搞事情？
+那我们的 getFile 函数实现也得稍微改一下，让返回的 thunk 函数可以交由中间件的 next 控制：
 
 ```js
-function getFile1(next) {
-  return getFile("file1");
+function getFileMiddleware(file, cb) {
+  let resp;
+
+  ajax(file, function(text) {
+    if (!resp) resp = text;
+    else resp(text);
+  });
+
+  return next => {
+    _next = args => {
+      cb && cb(args);
+      next(args);
+    };
+    if (resp) {
+      _next(resp);
+    } else {
+      resp = _next;
+    }
+  };
 }
-const getFiles = [getFile1, getFile2, getFile3];
-compose(...getFiles);
 ```
+
+基于上述两个实现。我们最终的写法可以修改为以下形式：
+
+```js
+const middlewares = [
+  getFileMiddleware("file1", output),
+  getFileMiddleware("file2", output),
+  getFileMiddleware("file3", resp => {
+    output(resp);
+    output("Complete!");
+  })
+];
+
+compose(...middlewares)();
+```
+
+最终输出结果仍然满足我们对并发控制的需求！但是写法上优雅了不少！篇幅有限，就不贴上结果了，同学们可验证一下~
 
 ## 解决方案：Promises
+
+到目前为止。我们都没有好好利用 JavaScript 送给我们的礼物“Promise”。Promise 是一个对未来的值的容器。利用 Promise 也能很好的完成我们的需求。
+
+如下，实现 getFile 函数：
 
 ```js
 function getFile(file) {
@@ -131,39 +186,76 @@ function getFile(file) {
 }
 ```
 
-### 避免 Promise 地狱
+来来来，调用一下
 
 ```js
 const p1 = getFile("file1");
 const p2 = getFile("file2");
 const p3 = getFile("file3");
 
+p1.then(t1 => {
+  output(t1);
+  p2.then(t2 => {
+    output(t2);
+    p3.then(t3 => {
+      output(t3);
+      output("Complete!");
+    });
+  });
+});
+```
+
+一样满足，但是？我们又陷入了 Promise 地狱...
+
+### 对 Promise 地狱 Say NO
+
+如果写出了上述的 Promise 地狱，证明对 Promise 的了解还不够，事实上也背离了 Promise 的设计初衷。我们可以改为下述写法：
+
+```js
+const p1 = getFile("file1");
+const p2 = getFile("file2");
+const p3 = getFile("file3");
+const constant = v => () => v;
+
 p1.then(output)
-  .then(() => p2)
+  .then(constant(p2))
   .then(output)
-  .then(() => p3)
+  .then(constant(p3))
   .then(output)
   .then(() => {
     output("Complete!");
   });
 ```
 
-### 更加函数式
+嗯哼~又更加优雅了点。Promise 地狱不见啦~
+
+### 更加函数式的 Promise 方式
+
+首先我要承认。我现在是，未来也是函数式编程的忠实拥护者。因此上述写法虽然减少了嵌套，但是还是觉得略显无聊，如果有一百个文件等待请求，难道我们还有手写一百个 getFile，还有数不清的 then 么？
+
+问题来了，如何再一步改进呢？我们好好思考一下。
+
+首先他们是一个重复的事情，既然重复那就可以抽象，在加上我们函数式工具 reduce 方法，改进如下：
 
 ```js
 const urls = ["file1", "file2", "file3"];
 const getFilePromises = urls.map(getFile);
+const constant = v => () => v;
 
 getFilePromises
   .concat(Promise.resolve("Complete!"), Promise.resolve())
   .reduce((chain, filePromise) => {
-    return chain.then(output).then(() => filePromise);
+    return chain.then(output).then(constant(filePromise));
   });
 ```
 
+问题解决，并且优雅~（同学们可能留意到我 concat 了一个 Promise.resolve，是因为此处 reduce 中总需要下个 Promise 承接上一个的值进行执行，细节实现问题，无需介意）。
+
 ## 解决方案：Generators
 
-Generator 是状态机的一种语法形式
+> Generator 是状态机的一种语法形式。
+
+ES6 中还有一个解决异步问题的新朋友 generator。同理我们来用 generator 来实现需求。这里我们使用 co 来简化 generator 的调用。
 
 ```js
 const co = require("co");
@@ -175,7 +267,6 @@ function getFile(file) {
 }
 
 function* loadFiles() {
-  console.time(label);
   const p1 = getFile("file1");
   const p2 = getFile("file2");
   const p3 = getFile("file3");
@@ -184,44 +275,114 @@ function* loadFiles() {
   output(yield p2);
   output(yield p3);
 
-  console.timeEnd(label);
   output("Complete!");
 }
 
 co(loadFiles);
 ```
 
+一样的完成了需求，我们又多了一种解决问题的思路对吧~ generator 其实在解决异步问题上的能量超乎想象。值得我们花费多点时间学习！
+
+等等，貌似我们在硬编码，再改进一下吧~
+
+```js
+function loadFiles(urls) {
+  const getFilePromises = urls.map(getFile);
+  return function* gen() {
+    do {
+      output(yield getFilePromises.shift());
+    } while (getFilePromises.length > 0);
+
+    output("Complete!");
+  };
+}
+
+co(loadFiles(["file1", "file2", "file3"]));
+```
+
+好啦！Perfect~
+
 ## 解决方案：async/await
+
+既然写到了这里，我们也用 ES7 中出现的 async/await 写一下实现方案吧！
+
+```js
+async function loadFiles(urls) {
+  const getFilePromises = urls.map(getFile);
+  do {
+    const res = await getFilePromises.shift();
+    output(res);
+  } while (getFilePromises.length > 0);
+
+  output("Complete!");
+}
+
+loadFiles(["file1", "file2", "file3"]);
+```
+
+当然，其实和 generator 的实现写法上大致无什么差异，但是在写法上提升了可读性~
+
+## 补充
+
+上述我们描述了很多解决异步并发和竞态问题的方法，接下来还要探讨一下请求的实际问题。
+
+### 每一个请求，都是一个野兽！
+
+一般而言，在前端而言我们经常遇到的异步场景，是请求问题。（当然对应到后端，有可能是各种 IO 操作，比如读写文件、操作数据库等）。
+
+那笔者为何谈到请求，因为大多人都会忽略此类问题。我们往往有时候会发出多个同类型的请求（不一定符合我们意愿），但是每每觉得自己的应用十分健壮，实际上如果没有当心控制“野兽”的话，实际上应用也会相当脆弱！
+
+如下图，应用依照 A1 -> A2 -> A3 顺序发起请求，我们也期望的是 A1 -> A2 -> A3 的顺序返回响应给应用。
+
+![](https://user-gold-cdn.xitu.io/2019/7/28/16c3798343115b98?w=570&h=296&f=png&s=11302)
+
+但实际上呢。但是每个请求都是十分野性的。我们根本无法把控它哪时候回来！请求的响应顺序极大程度依赖用户的网络环境。比如上图的响应顺序实际上就是 A3 -> A1 -> A2。
+天啦噜！如果这么不可靠的话，那么我们应用不就一团糟了么！实际上，一旦当你注意到请求的竞态问题的时候，那么应该就只是缺乏控制野兽的工具而已了！
+
+#### 队列化
+
+将请求串行！某些特殊场景下可以使用。在时间线上将多个异步拍平成一条线。野兽请求们依序进入队列（相当于我们给请求们拉起了缰绳，划好了奔跑的道路），如下图：
+
+![](https://user-gold-cdn.xitu.io/2019/7/28/16c3799b0ac74faa?w=1140&h=296&f=png&s=15306)
 
 <!-- @TODO -->
 
-## 关于请求
+只有当 A1 请求响应时，才进行 A2 请求，A2 响应成功时，进行 A3 请求。同理以此类推。（注意虽然请求的顺序强行被修改为串行，但并不意味这发起请求的动作也是串行）。因此在从时间维度上大大简化了场景，极大的减少了 bug 的发生概率。
 
-### 为什么需要取消请求
+#### 取消请求 + 最新
 
-### 取消一个 GET 请求？
+有同学们就会觉得，效率是否略显低下，既然我们前面的请求虽然依序生效了，但是最终很快都会被最新的请求结果所替换，那么还做那么多无用功干嘛？
+是的，的确不应当这么做！那么产生了以下做法：
 
-### 取消一个 POST 请求？
+![](https://user-gold-cdn.xitu.io/2019/7/28/16c379b0aedb68f2?w=564&h=298&f=png&s=14516)
 
-## 关于响应式界面
+凡是有新的请求产生，取消上一个还在路上的请求（原生的 XMLHttpRequest.abort()、axios 的 cancelToken），然后只取最新的一个请求，静静等待它的响应。比如 redux-saga 中 takeLatest。
 
-响应式界面 = 乐观更新 + 副本 + 操作队列
+（但是请同学们注意，如果需要每一个请求都对服务器产生效果，比如 POST 请求等，有时候队列也不失为一个好的解决方式）
 
-实现目标
+#### 结束标记
 
-- 保证最终状态正确
-- 防止数据丢失
-- 更响应式的界面
+通过应用中的标记状态，在需求请求完成后，标记成功，忽略多余请求，可以巧妙避开请求竞态的陷阱。由于此写法比较常见，不再赘述。
 
-## 关于工具
+#### 还有...
 
-### redux-saga
+有时候利用 Promise.race 或者 Promise.all 的这些异步流控制工具也能达成效果。
 
-### RxJS
+应该还有很多方法，比如 redux-saga、 RxJS，不同场景问题具体分析。欢迎同学们留言！
 
 ## 小结
 
+关于异步请求，是异步，也是明显的副作用，可谓名副其实的“野兽”。除了上述提到的一些方法外，我们应该永不停止寻找更好更优雅的范式去处理这类情况，比如响应式编程中流的思想、亦或者函数式编程中的 IO functor 等。
+
+对异步的掌控也许还需要我们了解 JavaScript 事件循环、任务队列等相关知识、还是要去学习更多范式和思维方式，扩展自己的思路。
+
 以上。对大家如有助益，不胜荣幸。
+
+## 题外话
+
+时间不是我们的敌人，应当是君子之交。人生是一个我们亲手编写的程序。我们给自己、给他人许下了很多承诺，或许也不甚满意自己过去人生中的一段不好的经历，我们永远背负着历史包袱，在实现承诺、解决问题、整理现实和发展人生的路上。那么生存亦或是毁灭，从不是一个简单的哲学问题。
+
+所以，我时而在编程时，也思考人生。其实编程的每一种范式也可以对应着一种生活哲学。那么如此的话，我偏爱函数式编程的哲学。
 
 ## 参考资料
 
@@ -235,3 +396,5 @@ co(loadFiles);
 - [ES6 generators in depth](https://2ality.com/2015/03/es6-generators.html)
 - [Race Conditions in JavaScript Apps by Thai Pangsakulyanont | JSConf.Asia 2019](https://www.youtube.com/watch?v=DWZj56qUNfs&feature=push-sd&attr_tag=_-nKBHAQrlEqNBVw%3A6)
 - [redux-thunk](https://github.com/reduxjs/redux-thunk)
+- [What the heck is the event loop anyway? - Philip Roberts - JSConf EU 2014](https://www.youtube.com/watch?v=8aGhZQkoFbQ)
+- [Further Adventures of the Event Loop - Erin Zimmer - JSConf EU 2018](https://www.youtube.com/watch?v=u1kqx6AenYw)

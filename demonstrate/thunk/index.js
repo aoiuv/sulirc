@@ -1,4 +1,4 @@
-const compose = require("./compose");
+// const compose = require("./compose");
 const co = require("co");
 
 function ajax(url, cb) {
@@ -31,22 +31,79 @@ function getFile(file) {
   });
 }
 
-function* loadFiles() {
-  console.time(label);
-  const p1 = getFile("file1");
-  const p2 = getFile("file2");
-  const p3 = getFile("file3");
+// const p1 = getFile("file1");
+// const p2 = getFile("file2");
+// const p3 = getFile("file3");
+// const constant = v => () => v;
 
-  output(yield p1);
-  output(yield p2);
-  output(yield p3);
+// p1.then(t1 => {
+//   output(t1);
+//   p2.then(t2 => {
+//     output(t2);
+//     p3.then(t3 => {
+//       output(t3);
+//       output("Complete!");
+//     });
+//   });
+// });
 
-  console.timeEnd(label);
-  output("Complete!");
+// p1.then(output)
+//   .then(constant(p2))
+//   .then(output)
+//   .then(constant(p3))
+//   .then(output)
+//   .then(() => {
+//     output("Complete!");
+//   });
+
+// const urls = ["file1", "file2", "file3"];
+// const getFilePromises = urls.map(getFile);
+
+// getFilePromises
+//   .concat(Promise.resolve("Complete!"), Promise.resolve())
+//   .reduce((chain, filePromise) => {
+//     return chain.then(output).then(constant(filePromise));
+//   });
+
+// function* loadFiles() {
+//   const p1 = getFile("file1");
+//   const p2 = getFile("file2");
+//   const p3 = getFile("file3");
+
+//   output(yield p1);
+//   output(yield p2);
+//   output(yield p3);
+
+//   output("Complete!");
+// }
+
+// co(loadFiles);
+
+
+function loadFiles(urls) {
+  const getFilePromises = urls.map(getFile);
+  return function* gen() {
+    do {
+      output(yield getFilePromises.shift())
+    } while (getFilePromises.length > 0);
+  
+    output("Complete!");
+  }
 }
 
-co(loadFiles);
+co(loadFiles(["file1", "file2", "file3"]));
 
+// async function loadFiles(urls) {
+//   const getFilePromises = urls.map(getFile);
+//   do {
+//     const res = await getFilePromises.shift();
+//     output(res);
+//   } while (getFilePromises.length > 0);
+
+//   output("Complete!");
+// }
+
+// loadFiles(["file1", "file2", "file3"]);
 /**
  * Thunks
  */
@@ -65,15 +122,15 @@ co(loadFiles);
 // }
 
 // // request all files at once in "parallel"
-// let th1 = getFile("file1");
-// let th2 = getFile("file2");
-// let th3 = getFile("file3");
+// let thunk1 = getFile("file1");
+// let thunk2 = getFile("file2");
+// let thunk3 = getFile("file3");
 
-// th1(function ready(text) {
+// thunk1(text => {
 //   output(text);
-//   th2(function ready(text) {
+//   thunk2(text => {
 //     output(text);
-//     th3(function ready(text) {
+//     thunk3(text => {
 //       output(text);
 //       output("Complete!");
 //     });
@@ -83,6 +140,28 @@ co(loadFiles);
 /**
  * Thunks with middlewares
  */
+// function compose(...funcs) {
+//   if (funcs.length === 0) {
+//     return arg => arg;
+//   }
+
+//   if (funcs.length === 1) {
+//     return funcs[0];
+//   }
+
+//   return funcs.reduce((a, b) => (...args) => a(b(...args)));
+// }
+
+// function compose(...mdws) {
+//   return () => {
+//     function next() {
+//       const mdw = mdws.shift();
+//       mdw && mdw(next);
+//     }
+//     mdws.shift()(next);
+//   };
+// }
+
 // function getFileMiddleware(file, cb) {
 //   let resp;
 
@@ -91,10 +170,9 @@ co(loadFiles);
 //     else resp(text);
 //   });
 
-//   return (ctx, next) => {
+//   return next => {
 //     _next = args => {
-//       ctx[file] = args;
-//       cb && cb(args, ctx);
+//       cb && cb(args);
 //       next(args);
 //     };
 //     if (resp) {
@@ -105,15 +183,13 @@ co(loadFiles);
 //   };
 // }
 
-// console.time(label);
 // const middlewares = [
 //   getFileMiddleware("file1", output),
 //   getFileMiddleware("file2", output),
-//   getFileMiddleware("file3", (resp, ctx) => {
+//   getFileMiddleware("file3", resp => {
 //     output(resp);
 //     output("Complete!");
-//     console.timeEnd(label);
 //   })
 // ];
 
-// compose(...middlewares)({});
+// compose(...middlewares)();
