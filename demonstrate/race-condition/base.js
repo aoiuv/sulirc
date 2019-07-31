@@ -5,7 +5,7 @@ function ajax(url, cb) {
     file3: "The last text"
   };
   const pending = (Math.round(Math.random() * 1e4) % 5000) + 1000;
-  console.log("Request: " + url + `, TIME: ${pending} ms`);
+  console.log("Request: " + url + `, total time: ${pending} ms`);
 
   setTimeout(() => {
     cb(fake_responses[url]);

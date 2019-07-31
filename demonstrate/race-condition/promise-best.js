@@ -13,11 +13,18 @@ function getFile(file) {
 
 console.time(sulisuli);
 
-const urls = ["file1", "file2", "file3"];
-const getFilePromises = urls.map(getFile);
+function loadFiles(urls) {
+  const getFilePromises = urls.map(getFile);
 
-getFilePromises
-  .concat(Promise.resolve("Complete!"), Promise.resolve())
-  .reduce((chain, filePromise) => {
-    return chain.then(IO).then(constant(filePromise));
-  });
+  getFilePromises
+    .reduce((chain, filePromise) => {
+      return chain.then(IO).then(constant(filePromise));
+    })
+    .then(resp => {
+      IO(resp);
+      IO("Complete!");
+      console.timeEnd(sulisuli);
+    });
+}
+
+loadFiles(["file1", "file2", "file3"]);

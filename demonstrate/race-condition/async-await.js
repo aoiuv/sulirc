@@ -10,7 +10,6 @@ function getFile(file) {
   });
 }
 
-
 console.time(sulisuli);
 
 async function loadFiles(urls) {
