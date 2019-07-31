@@ -6,37 +6,30 @@ function getFile(file) {
   });
 }
 
-class QueueManager {
-  queue = [];
-  isRunningQueue = false;
+class ActionQueueManager {
+  _queue = [];
+  _flag = true;
 
   add(f) {
-    this.queue.push(f);
-    this.run();
+    this._queue.push(f);
+    this._flag && this.run();
   }
 
   async run() {
-    if (this.isRunningQueue) {
-      return;
-    } else {
-      this.isRunningQueue = true;
-    }
-
-    while (this.queue.length > 0) {
-      const item = this.queue.shift();
+    this._flag = false;
+    while (this._queue.length > 0) {
+      const item = this._queue.shift();
       try {
-        const res = await item();
-        IO(res);
+        IO(await item());
       } catch (e) {
         console.error(e);
       }
     }
-
-    this.isRunningQueue = false;
+    this._flag = true;
   }
 }
 
-const fileQueue = new QueueManager();
+const fileQueue = new ActionQueueManager();
 ["file1", "file2", "file3"].forEach(filename => {
   fileQueue.add(() => getFile(filename));
 });
