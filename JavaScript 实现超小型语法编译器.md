@@ -1,5 +1,7 @@
 ## 前言
 
+本篇文章是笔者精读 [the-super-tiny-compiler](https://the-super-tiny-compiler.glitch.me/) 的源代码后的总结，笔者特别推荐大家去读，否则看此篇文章容易一头雾水。
+
 首先，建立对 ast 抽象语法树的初步了解，大家可以在 [astexplorer](https://astexplorer.net/) 这个网站上输入一段 javascript 代码，在右侧面板中查看生成的 ast 语法树。
 
 比如输入 `add(3, div(8, 2))` （解析器默认挑选了 [acorn](https://github.com/acornjs/acorn))）解析出来的抽象语法树 ast 如下右侧：
@@ -11,7 +13,7 @@
 
 首先，作为一个前端工程师，笔者觉得了解编译原理，有以下几个好处：
 
-1. 编译原理的确是一个很有趣而且很有难度的知识（听说也是程序员的三大浪漫之一）。
+1. 编译原理的确是一个很有趣的知识，学习一下纯当爱好。
 2. 多了解相关的编译知识，有助于加深对编程语言的理解。
 3. 扩展开来，对 javascript 转译、代码压缩、eslint、css 预处理器、prettier 等工具的理解和使用都会有帮助。
 
@@ -60,7 +62,9 @@ const output = "add(3, div(8, 2))";
 
 语法分析，主要目的在于通过分析词法分析生成的词法单元流，构建出一个代表当前程序的抽象语法树 ast。
 
-由上面的 tokenizer 进行分词后，其实并没有表达出语法。此时需要设计一个 parser 将 tokens 转换为 ast。parser 指针将逐个解析 token，在以上简化的 tokens 列表中，parser 在解析到左括号 "(" 此 token 时，只要下一个 token 不是右括号 ")"，此时意味着需要进入新的一层递归进行处理生成语法树。
+由上面的 tokenizer 进行分词后，其实并没有表达出语法。此时需要设计一个 parser 将 tokens 转换为 ast。parser 指针将逐个解析 token，在以上简化的 tokens 列表中，parser 在解析到左括号 "(" 此 token 时，进入递归，只要下一个 token 不是右括号 ")"，就不会结束递归。
+
+最终指针移至 tokens 列表尾部，消费完成所有 tokens，此时生成完整的 ast。
 
 示意图如下：
 ![](https://user-gold-cdn.xitu.io/2019/9/14/16d2b6285d477f82?w=2260&h=686&f=png&s=96333)
@@ -187,12 +191,11 @@ traverse 的第一个参数是 ast，第二个参数我们称作 visitor（访�
 
 代码生成器主要的职责是将转换后的 ast 通过特定规则组合为新的代码。
 
-在得到通过 transformer 转换后的新语法树后，代码生成器同样递归的调用自己打印 ast 中的每一个节点，最终生成一个长长的代码字符串。也就是我们目标的；output。
+在得到通过 transformer 转换后的新语法树后，代码生成器同样递归的调用自己打印 ast 中的每一个节点，最终生成一个长长的代码字符串。也就是我们目标的：output。
 
 ## 小结
 
-本篇文章是笔者精读 [the-super-tiny-compiler](https://the-super-tiny-compiler.glitch.me/) 的源代码后的总结（推荐大家去读）。
-当然，此文仅作学习参考用，不具有任何实用价值哈。
+笔者对编译原理了解不多，此文兴趣所致，描述有可能不甚严谨。以后如有机会学习深入编译原理，会继续发文补充。
 
 以上，对大家如有助益，不胜荣幸。
 
