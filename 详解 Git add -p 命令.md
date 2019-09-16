@@ -1,4 +1,4 @@
-##
+## 前言
 y - stage this hunk
 n - do not stage this hunk
 q - quit; do not stage this hunk nor any of the remaining ones
@@ -15,5 +15,6 @@ e - manually edit the current hunk
 ? - print help
 
 ## 参考资料
-* [git-add](https://git-scm.com/docs/git-add)
-* [What does each of the [y,n,q,a,d,/,K,j,J,g,e,?] stand for in context of git -p](https://stackoverflow.com/questions/10605405/what-does-each-of-the-y-n-q-a-d-k-j-j-g-e-stand-for-in-context-of-git-p)
+
+- [git-add](https://git-scm.com/docs/git-add)
+- [What does each of the [y,n,q,a,d,/,K,j,J,g,e,?] stand for in context of git -p](https://stackoverflow.com/questions/10605405/what-does-each-of-the-y-n-q-a-d-k-j-j-g-e-stand-for-in-context-of-git-p)
