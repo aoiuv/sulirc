@@ -8,10 +8,7 @@
 
 ~的相关资料索引
 
-备注：
-
-相当一部分为英语资料、以及付费资料。
-质量上乘，推荐学习，以及反复学习。
+备注：部分为英语资料、以及付费资料。质量上乘，推荐学习，以及反复学习。
 
 ## 计算机科学
 
@@ -29,6 +26,13 @@
 
 - [ndb](https://github.com/GoogleChromeLabs/ndb)
 - [chrome-devtools](https://developers.google.com/web/tools/chrome-devtools)
+
+## 正则
+
+- [Regular_Expressions | MDN](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Guide/Regular_Expressions)
+- [awesome-regex](https://github.com/aloisdg/awesome-regex)
+- [regexr](https://regexr.com/)
+- [regexpr](https://regexper.com/)
 
 ## Node.js
 
@@ -84,6 +88,7 @@
 
 ## 有趣 & 探索
 
+- [codewars](https://www.codewars.com/dashboard)
 - [stackoverflow](https://stackoverflow.com/)
 - [brainfacts](http://www.brainfacts.org/)
 - [brilliant](https://brilliant.org/courses/?tour=true)
