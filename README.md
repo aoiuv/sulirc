@@ -1,8 +1,12 @@
 ## 前言
 
-本人目前是前端开发。主要工作技术栈为 TypeScript、React、Git 等。对函数式编程、响应式编程等话题较为感兴趣。
+笔者主要工作为前端工程师，技术栈为 Nodejs、TypeScript、React、Git 等。
 
-平常除了上班、以及陪我主子苏里之外（一个帅气无比的英短银渐层），日常偶尔写写文章，目前文章主要发布于掘金社区，不定期会更新到此处作存档用
+工作之余，对音乐、素描、文学、心理学等等都有较为浓厚的兴趣。
+
+下图是我的苏里（一只可爱又聪明的英短银渐层），日常保持学习，不定期会更新技术文章到掘金社区，同时同步更新到此处作存档用。
+
+<img src="./images/WechatIMG60.jpeg" />
 
 ## 目录
 
@@ -24,36 +28,8 @@
 - 记一个头像高光动画的 CSS 实现
 - 设计实现优雅修改 redux 数据流的一个库-redux-chef
 
-## 示例
-
-示例代码一般在于 demonstrate 文件夹内
-
-```bash
-demonstrate/
-├── cancel
-│   ├── backend
-│   │   └── index.js
-│   ├── index.html
-│   └── index.js
-├── demo
-│   └── index.js
-├── generators
-│   └── index.js
-└── race-condition
-    ├── async-await.js
-    ├── base.js
-    ├── client-use-queue.js
-    ├── compose.js
-    ├── generators.js
-    ├── promise-best.js
-    ├── promise-better.js
-    ├── promise.js
-    ├── thunk-mdw.js
-    └── thunk.js
-
-5 directories, 15 files
-```
-
 ## 备注
 
-若有相关问题，可在 issue 里提，感谢！
+关于学习资料，整理在 REFERENCE.md 里，不定期更新。
+
+and 若有相关问题，可在 issue 里提，感谢！
