@@ -27,7 +27,7 @@
 - [ndb](https://github.com/GoogleChromeLabs/ndb)
 - [chrome-devtools](https://developers.google.com/web/tools/chrome-devtools)
 
-## 正则
+### 正则
 
 - [Regular_Expressions | MDN](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Guide/Regular_Expressions)
 - [awesome-regex](https://github.com/aloisdg/awesome-regex)
