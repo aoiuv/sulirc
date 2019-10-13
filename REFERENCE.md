@@ -41,12 +41,13 @@
 - [Networking and Streams](https://frontendmasters.com/courses/networking-streams/)
 - [Digging Into Node.js](https://frontendmasters.com/courses/digging-into-node/)
 - [stream-handbook](https://github.com/substack/stream-handbook)
+- [Node.js 最佳实践](https://github.com/goldbergyoni/nodebestpractices/blob/master/README.chinese.md)
 
 ## Haskell
 
 - [H-99: Ninety-Nine Haskell Problems](https://wiki.haskell.org/H-99:_Ninety-Nine_Haskell_Problems)
 - [Learn You A Haskell(zh)](https://github.com/MnO2/learnyouahaskell-zh/blob/develop/zh-cn/resource/resource.md)
-- [Haskell Teching class](https://www.bilibili.com/video/av7513983/?p=9)
+- [Haskell Teching Class](https://www.bilibili.com/video/av7513983/?p=9)
 
 ## 扩展阅读
 
@@ -79,8 +80,15 @@
 
 ## 标准 & 参考文档
 
-- [W3 ORG](https://www.w3.org/TR/DOM-Level-3-Events/#interface-uievent)
+- [W3 TR](https://www.w3.org/TR/)
 - [MDN](https://developer.mozilla.org/en-US/)
+- [Hypertext Transfer Protocol -- HTTP/1.1](https://tools.ietf.org/html/rfc2616)
+- [HTTP Over TLS](https://tools.ietf.org/html/rfc2818)
+- [Hypertext Transfer Protocol Version 2 (HTTP/2)](https://tools.ietf.org/html/rfc7540)
+- [The WebSocket Protocol](https://tools.ietf.org/html/rfc6455)
+- [Git Reference](https://git-scm.com/docs)
+- [Pro Git](https://git-scm.com/book/en/v2)
+- [ECMAScript 2018](https://www.ecma-international.org/ecma-262/9.0/index.html#sec-intro)
 
 ## 自我成长
 
