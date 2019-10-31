@@ -7,7 +7,6 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "mnode": "node --experimental-modules $script"
   },
   "dependencies": {
     "co": "^4.6.0",
