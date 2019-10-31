@@ -36,7 +36,7 @@
 目录生成脚本
 
 ```bash
-ls | grep -E '[^README|REFERENCE].*\.md' | sed -E 's/ /%20/g' | sed -E 's/^(.*)(\.md)/- [\1](\.\/\1\2)/g'
+ls | grep -E '[^README|REFERENCE].*\.md' | sed -E 's/^(.*)(\.md)/- [\1](\.\/\1\2)/g'
 ```
 
 ## 备注
