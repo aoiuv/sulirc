@@ -5,7 +5,6 @@ function zip(list1, list2) {
   if (list2.length === 0) {
     return [];
   }
-
   return [[list1[0], list2[0]]].concat(zip(list1.slice(1), list2.slice(1)));
 }
 

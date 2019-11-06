@@ -5,7 +5,6 @@ function elem(a, list) {
   if (a === list[0]) {
     return true;
   }
-
   return elem(a, list.slice(1));
 }
 
