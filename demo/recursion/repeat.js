@@ -1,22 +1,8 @@
-function repeat(a, n) {
-  let i = 0;
-  let result = [];
-
-  while (i++ < n) {
-    result.push(a);
-  }
-  return result;
+function repeat(x) {
+  return [x].concat(repeat(x));
 }
 
-function repeat(a, n) {
-  if (!Array.isArray(a)) {
-    a = [a];
-  }
-  if (n === 1) {
-    return a;
-  }
-  
-  return repeat(a.concat(a[0]), n - 1);
-}
-
-console.log(repeat("+", 9));
+// Haskell有懒执行机制
+// 因此可以 take n (repeat "*")
+// Javascript 不行，堆栈溢出
+console.log(repeat("*"));
