@@ -6,10 +6,10 @@
   "author": "soulizs <ygj2awww@gmail.com>",
   "license": "MIT",
   "type": "module",
-  "scripts": {
-  },
+  "scripts": {},
   "dependencies": {
     "co": "^4.6.0",
+    "jest": "^24.9.0",
     "koa": "^2.7.0",
     "lodash": "4.17.14",
     "minimist": "^1.2.0",
