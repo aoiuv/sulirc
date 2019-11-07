@@ -1,17 +1,15 @@
-首先，这是一篇很轻松的技术随笔，想用 haskell 和 javascript 来双向练习递归的基本思想（基准 + 递归条件）。
+（同事建议我用“自从用了递归，我头发又长回来了”作为标题，哈哈哈哈哈，我想想觉得十分有趣，然鹅还是算了算了）
 
-在 haskell 中，递归十分重要，一般解决一个问题，命令式语言期望我们给出求解步骤，而 haskell 则倾向于让你提供问题的描述，所以在 haskell 中，没有 while 和 for 循环，只有递归作为求解工具。
+首先，这是一篇用 haskell 和 javascript 两种语言来练习递归的基本实践（基准 + 递归条件）的分享文章。
 
-而 javascript 则比较灵活，即可使用 while 和 for 命令式的解决问题，也可以使用递归求解。
+一般解决一个问题，命令式语言期望我们给出求解步骤，而 haskell 则倾向于让你提供问题的描述，所以在 haskell 中，没有 while 和 for 循环，只有递归作为求解工具，所以递归之于haskell的重要性，可想而知。
 
-当笔者以 haskell 部分实现的函数为参考，编写对应的递归 javascript 函数时，发现实现思路十分简洁，又起到了一定的练习作用，故而分享。
+在 javascript 里则比较灵活，这种灵活性给予了我们许多范式可以选择，即可使用 while 和 for 命令式的解决问题，也可以使用递归求解。
 
 当然，声明两点：
 
 1. haskell 语法不是本文的重点，但会适当讲解一下。
 2. 本篇文章不代表具有任何实用性，但肯定有一定的学习参考价值。
-
-所以，请看代码！
 
 ## elem
 
@@ -39,9 +37,11 @@ function elem(a, list) {
 
 首先我们先看第一段 haskell 的实现：
 
-`elem' :: (Eq a) => a -> [a] -> Bool` 这一句实际上是 elem' 函数的类型签名（使用过 ramda.js 的同学应该也比较眼熟）,意思可大概理解为，elem' 函数接收 任意类型 a 和 任意类型 a[], 最终返回一个布尔值类型。（haskell 的函数都是自动柯里化的，但本文不与之相关）。
+`elem' :: (Eq a) => a -> [a] -> Bool` 这一句实际上是 elem' 函数的类型签名（使用过 ramda.js 的同学应该也比较眼熟）,意思可大概理解为，elem' 函数接收 任意类型 a 和 任意类型 a[], 最终返回一个布尔值类型。
 
-接下来以 elem' 两句表达式在 haskell 里被称为模式匹配，当然也可以理解为函数重载，java 同学应该比较好理解，对于 javascript 来说，没有函数重载的语法机制，但是可以通过 arguments 的类型和数量人工模拟重载。
+（补充一下，haskell 的函数都是自动柯里化的，所以函数签名才会 a -> [a] -> Bool。因为如果只传一个参数，则签名可以理解为：a -> ([a] -> Bool) ，但本文不会用到这种特性。）
+
+接下来以 elem' 两句表达式在 haskell 里被称为模式匹配，当然也可以理解为函数重载。对于 javascript 来说没有函数重载的语法机制，但是我们可以通过 arguments 的类型和数量人工模拟重载。
 
 因此，以上两句，也就意味着：
 
@@ -205,29 +205,13 @@ function quicksort(list) {
   let x = list[0];
   let rest = list.slice(1);
 
-  let smallerSorted = quicksort(LE(x, rest));
-  let biggerSorted = quicksort(GT(x, rest));
+  let smallerSorted = quicksort(rest.filter(i => i <= x));
+  let biggerSorted = quicksort(rest.filter(i => i > x));
 
   return [smallerSorted, x, biggerSorted].flat();
-}
-
-function LE(x, list) {
-  let result = [];
-  for (let i = 0; i < list.length; i++) {
-    list[i] <= x && result.push(list[i]);
-  }
-  return result;
-}
-
-function GT(x, list) {
-  let result = [];
-  for (let i = 0; i < list.length; i++) {
-    list[i] > x && result.push(list[i]);
-  }
-  return result;
 }
 ```
 
 这里的 quicksort'方法 [a | a <- xs, a <= x] 用到了一个 haskell 里很有趣的 List Comprehension，这种写法有点像数学里的集合。
 
-表示方便，我用 javascript 写个个 LE 和 GT 分别替代 [a | a <- xs, a <= x] 和 [a | a <- xs, a > x]。
+在 javascript 里，可以通过写两个 filter 分别替代 [a | a <- xs, a <= x] 和 [a | a <- xs, a > x]。
