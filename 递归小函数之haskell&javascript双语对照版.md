@@ -1,4 +1,4 @@
-（同事建议我用“自从用了递归，我头发又长回来了”作为标题，哈哈哈哈哈）
+（同事建议我用“自从用了递归，我头发又长回来了”作为标题，哈哈哈哈哈但我是老实人，明明从来没有掉过头发，我就不欺骗大家了~）
 
 ## 前言
 
@@ -29,6 +29,8 @@
 
 判断元素是否存在元素列表中
 
+haskell 实现
+
 ```haskell
 elem' :: (Eq a) => a -> [a] -> Bool
 elem' a [] = False
@@ -36,6 +38,8 @@ elem' a (x:xs)
     | a == x    = True
     | otherwise = a `elem'` xs
 ```
+
+js 实现
 
 ```js
 function elem(a, list) {
@@ -79,11 +83,15 @@ function elem(a, list) {
 
 数字列表求和
 
+haskell 实现
+
 ```haskell
 sum' :: Num a => [a] -> a
 sum' []  = 0
 sum' (x:xs) = x + sum' xs
 ```
+
+js 实现
 
 ```js
 function sum(list) {
@@ -98,11 +106,13 @@ function sum(list) {
 
 甚至我们得到了一个问题的定义：**一个数字列表的和**，必然等于**第一个数**和**剩余列表数字和**的**和**。
 
-正常解法：list.reduce
+正常解法：list.reduce((a, b) => a + b)
 
 ## maximum
 
 求数字列表的最大值
+
+haskell 实现
 
 ```haskell
 maximum' :: (Ord a) => [a] -> a
@@ -111,10 +121,12 @@ maximum' [x] = x
 maximum' (x:xs) = max x (maximum' xs)
 ```
 
+js 实现
+
 ```js
 function maximum(list) {
   if (list.length === 0) {
-    throw new Error("maximum of empty list");
+    throw new Error('maximum of empty list');
   }
   if (list.length === 1) {
     return list[0];
@@ -129,10 +141,14 @@ function maximum(list) {
 
 重复一个值
 
+haskell 实现
+
 ```haskell
 repeat' :: a -> [a]
 repeat' x = x:repeat' x
 ```
+
+js 实现
 
 ```js
 function repeat(x) {
@@ -151,12 +167,16 @@ Prelude> take 5 (repeat "*")
 
 固定次数重复一个值
 
+haskell 实现
+
 ```haskell
 replicate' :: (Num i, Ord i) => i -> a -> [a]
 replicate' n x
     | n <= 0    = []
     | otherwise = x:replicate' (n-1) x
 ```
+
+js 实现
 
 ```js
 function replicate(n, x) {
@@ -175,11 +195,15 @@ function replicate(n, x) {
 
 数组倒序
 
+haskell 实现
+
 ```haskell
 reverse' :: [a] -> [a]
 reverse' [] = []
 reverse' (x:xs) = reverse' xs ++ [x]
 ```
+
+js 实现
 
 ```js
 function reverse(list) {
@@ -196,6 +220,8 @@ function reverse(list) {
 
 取数组元素的前 n 项
 
+haskell 实现
+
 ```haskell
 take' :: (Num i, Ord i) => i -> [a] -> [a]
 take' n _
@@ -203,6 +229,8 @@ take' n _
 take' _ []     = []
 take' n (x:xs) = x : take' (n-1) xs
 ```
+
+js 实现
 
 ```js
 function take(n, list) {
@@ -226,12 +254,16 @@ function take(n, list) {
 
 （我们可以理解为，尽可能的组 cp 哈哈哈）
 
+haskell 实现
+
 ```haskell
 zip' :: [a] -> [b] -> [(a,b)]
 zip' _ [] = []
 zip' [] _ = []
 zip' (x:xs) (y:ys) = (x,y):zip' xs ys
 ```
+
+js 实现
 
 ```js
 function zip(list1, list2) {
@@ -265,6 +297,8 @@ Prelude> zip ["a","b","c"] [1,2,3]
 
 快速排序
 
+haskell 实现
+
 ```haskell
 quicksort :: (Ord a) => [a] -> [a]
 quicksort [] = []
@@ -273,6 +307,8 @@ quicksort (x:xs) =
         biggerSorted = quicksort [a | a <- xs, a > x]
     in smallerSorted ++ [x] ++ biggerSorted
 ```
+
+js 实现
 
 ```js
 function quicksort(list) {
@@ -292,7 +328,6 @@ function quicksort(list) {
 这里的 quicksort'方法 [a | a <- xs, a <= x] 用到了一个 haskell 里很有趣的 List Comprehension，这种写法有点像数学里的集合。
 
 在 javascript 里，可以通过写两个 filter 分别替代 [a | a <- xs, a <= x] 和 [a | a <- xs, a > x]。
-
 
 当然，算法的定义：排过序的数组，就是令所有小于等于头部的元素在先(它们已经排序完成), 后跟大于头部的元素(它们同样已经排序完成)。
 这里与众不同的是，因为定义中有两次排序，所以就递归两次！~
