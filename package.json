@@ -1,23 +1,27 @@
 {
-  "name": "xblog",
+  "name": "sulirc",
   "version": "1.0.0",
   "main": "index.js",
-  "repository": "https://github.com/soulizs/xblog.git",
-  "author": "soulizs <ygj2awww@gmail.com>",
+  "repository": "https://github.com/sulirc/sulirc.git",
+  "author": "sulirc <ygj2awww@gmail.com>",
   "license": "MIT",
   "type": "module",
   "scripts": {},
   "dependencies": {
+    "babel-polyfill": "^6.26.0",
     "co": "^4.6.0",
+    "dva-core": "^2.0.1",
     "jest": "^24.9.0",
     "koa": "^2.7.0",
     "lodash": "4.17.14",
     "minimist": "^1.2.0",
-    "ramda": "^0.26.1"
+    "ramda": "^0.26.1",
+    "redux": "^4.0.4"
   },
   "devDependencies": {
     "@babel/cli": "^7.5.0",
     "@babel/core": "^7.5.4",
-    "@babel/preset-env": "^7.5.4"
+    "@babel/preset-env": "^7.5.4",
+    "@babel/runtime": "^7.7.2"
   }
 }
