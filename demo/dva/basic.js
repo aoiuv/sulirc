@@ -32,3 +32,5 @@ app.start();
 
 app._store.dispatch({ type: "square" });
 app._store.dispatch({ type: "count/add" });
+
+console.log(app._store.getState())

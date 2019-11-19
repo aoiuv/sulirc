@@ -1,14 +1,15 @@
 ## 前言
 
-关于 Dva 源码解析，官网已有相关指南 [Dva 源码解析](https://dvajs.com/guide/source-code-explore.html)。本文虽然也是称作源码解析，但不同之处在于：
+关于 Dva 源码解析，官网已有相关指南 [Dva 源码解析](https://dvajs.com/guide/source-code-explore.html)。本文虽然也是称作精度源码，但不同之处在于：
 
-1. 着重 dva-core 源码实现
-2. 角度不同，体验想法不同
-3. 探讨对于 dva-core 的更多用法
+1. 着重介绍 dva-core 源码实现
+2. 探讨对于 dva-core 的更多场景下的用法
 
 好了言归正传，笔者在半年以前，提起 redux 这些框架总会不自觉的与 react 相关联，事实上真的这些框架脱离了 react 难道就无法使用了么？以及如何扩展使用这些框架达成我们的应用需求呢？
 
 而后来笔者因项目原因不进行 web 应用开发，第一次尝试开发业务底层相关 SDK 的时候，意识到虽然在使用 redux 上 react 是主要场景。但是 redux 作为状态管理库，作用域理应更大。那么基于 redux 衍生的 redux-saga、甚至于 dva（也就是今日的主题），那也可以脱离 web 应用开发场景进行理解与使用。
+
+因此，本篇文章主要目的是：**精读 dva-core 源码的同时，也探讨一下 dva-core 的其他使用场景**，比如构建具有状态管理需求的 SDK 等等。
 
 由于 dva-core 依赖了 redux 和 redux-saga。在介绍 dva-core 之前，还是先简单熟悉一下两者的基本概念。
 
@@ -43,5 +44,34 @@ const store = createStore(reducer, applyMiddleware(sagaMiddleware));
 // then run the saga
 sagaMiddleware.run(mySaga);
 ```
+
+## dva 的基本分离架构
+
+大概翻一下 dva 的项目文件目录，可以知道 dva 是使用 lerna 进行多包管理的项目。主要分为以下四个包，如下所示：
+
+```bash
+~/Desktop/dva $ tree ./packages/ -L 1
+./packages/
+├── dva
+├── dva-core
+├── dva-immer
+└── dva-loading
+
+4 directories, 0 files
+```
+
+dva 使用 react-redux 实现了 view 层。
+
+dva-core 基于 redux 和 redux-saga **处理 model 层**，比如包括了 state 管理、数据的异步加载、订阅-发布模式。
+
+dva-immer 依赖 [immer](https://immerjs.github.io/immer/docs/introduction) 来优雅处理不可变状态。
+
+dva-loading 解决模型加载的问题。
+
+当然， dva 核心依赖了 dva-core。本文的重点也在于此。
+
+## dva-core
+
+dva-core 由于集成了 redux 和 redux-saga。那么在对于应用的状态管理和副作用管理这两种场景应该具备强大的能力。
 
 ## 小结

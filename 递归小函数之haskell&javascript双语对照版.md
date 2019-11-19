@@ -277,14 +277,14 @@ function zip(list1, list2) {
 }
 ```
 
-haskell 里的 zip，把两个数组打包成了一对对的元祖。
+haskell 里的 zip，把两个数组打包成了一对对的元组（Tuple）。
 
 ```bash
 Prelude> zip ["a","b","c"] [1,2,3]
 [("a",1),("b",2),("c",3)]
 ```
 
-由于 javascript 里没有元祖，只能用数组模拟。
+由于 javascript 里没有元组，只能用数组模拟。
 
 ```bash
 > zip(["a","b","c"], [1,2,3])
