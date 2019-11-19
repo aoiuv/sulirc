@@ -1,1 +1,1 @@
-学习资料 -> 请参考语雀文档：[苏里 > 苏里的自由随笔 > 天大地大，学习最大](https://www.yuque.com/sulirc/vh32o0/ny150b)
+学习资料 -> 请参考语雀文档：[苏里 > 苏里的自由随笔 > 通用学习资源索引](https://www.yuque.com/sulirc/vh32o0/ny150b)
