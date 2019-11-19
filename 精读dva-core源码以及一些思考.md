@@ -66,7 +66,7 @@ dva-core 基于 redux 和 redux-saga **处理 model 层**，比如包括了 stat
 
 dva-immer 依赖 [immer](https://immerjs.github.io/immer/docs/introduction) 来优雅处理不可变状态。
 
-dva-loading 解决模型加载的问题。
+dva-loading 实现了自动处理 loading 状态。
 
 当然， dva 核心依赖了 dva-core。本文的重点也在于此。
 

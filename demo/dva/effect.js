@@ -8,11 +8,20 @@ const app = create({
   },
 });
 
+let count = 1;
+
 app.use({
   onReducer: reducer => {
     return (state, action) => {
       console.log(`onReducer`, state, action);
       return reducer(state, action);
+    };
+  },
+  onEffect(effect, { put }, model, key) {
+    console.log(`onEffect`, model.state, model.namespace, key);
+    return function*(...args) {
+      count++;
+      yield effect(...args);
     };
   },
 });
@@ -45,11 +54,11 @@ app.model({
 
 app.start();
 
-// app._store.dispatch({ type: 'users/add', payload: 'sulirc' });
-app._store.dispatch({ type: 'users/prefix', payload: 'sulirc' });
+app._store.dispatch({ type: 'users/add', payload: 'sulirc' });
+// app._store.dispatch({ type: 'users/prefix', payload: 'sulirc' });
 
 // app._store.dispatch({ type: 'users/setter', payload: 'sulirc' });
 
-
 // console.log('sagas: ', Object.keys(saga));
 // console.log('saga effects: ', Object.keys(saga.effects));
+console.log('count', count);
