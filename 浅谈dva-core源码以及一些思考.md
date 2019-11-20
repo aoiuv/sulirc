@@ -74,4 +74,30 @@ dva-loading 实现了自动处理 loading 状态。
 
 dva-core 由于集成了 redux 和 redux-saga。那么在对于应用的状态管理和副作用管理这两种场景应该具备强大的能力。
 
+### 模型注册：model & unmodel
+
+### 替换模型：replaceModel
+
+### 同步操作处理：reducers
+
+> 用于处理同步操作，唯一可以修改 state 的地方。由 action 触发。
+
+格式为 (state, action) => newState 或 [(state, action) => newState, enhancer]
+
+### 副作用处理：effects
+
+> 用于处理异步操作和业务逻辑，不直接修改 state。由 action 触发，可以触发 action。
+
+格式为 _(action, effects) => void 或 [_(action, effects) => void, { type }]。
+
+### 订阅：subscriptions
+
+格式为 ({ dispatch, history }, done) => unlistenFunction。
+
+### 配置钩子：create(opts)
+
+### 注册插件：app.use(hooks)
+
 ## 小结
+
+以上。
