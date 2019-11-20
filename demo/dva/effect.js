@@ -13,14 +13,15 @@ let count = 1;
 app.use({
   onReducer: reducer => {
     return (state, action) => {
-      console.log(`onReducer`, state, action);
+      // console.log(`onReducer`, state, action);
       return reducer(state, action);
     };
   },
-  onEffect(effect, { put }, model, key) {
+  onEffect(effect, { put, takeEvery }, model, key) {
     console.log(`onEffect`, model.state, model.namespace, key);
     return function*(...args) {
       count++;
+      console.log('effect', ...args);
       yield effect(...args);
     };
   },
@@ -55,7 +56,7 @@ app.model({
 app.start();
 
 app._store.dispatch({ type: 'users/add', payload: 'sulirc' });
-// app._store.dispatch({ type: 'users/prefix', payload: 'sulirc' });
+app._store.dispatch({ type: 'users/prefix', payload: 'sulirc' });
 
 // app._store.dispatch({ type: 'users/setter', payload: 'sulirc' });
 
