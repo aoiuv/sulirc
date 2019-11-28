@@ -25,6 +25,8 @@
     "@babel/cli": "^7.5.0",
     "@babel/core": "^7.5.4",
     "@babel/preset-env": "^7.5.4",
-    "@babel/runtime": "^7.7.2"
+    "@babel/runtime": "^7.7.2",
+    "dva-immer": "^0.4.18",
+    "dva-loading": "^3.0.19"
   }
 }

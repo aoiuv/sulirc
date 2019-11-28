@@ -33,8 +33,8 @@ reducer 需要保持两个原则，第一是保持纯函数特性，第二是保
 从示例使用上即可明朗：
 
 ```js
-import { createStore, applyMiddleware } from 'redux';
-import createSagaMiddleware from 'redux-saga';
+import { createStore, applyMiddleware } from "redux";
+import createSagaMiddleware from "redux-saga";
 
 // create the saga middleware
 const sagaMiddleware = createSagaMiddleware();
@@ -64,7 +64,7 @@ dva 使用 react-redux 实现了 view 层。
 
 dva-core 基于 redux 和 redux-saga **处理 model 层**，比如包括了 state 管理、数据的异步加载、订阅-发布模式。
 
-dva-immer 依赖 [immer](https://immerjs.github.io/immer/docs/introduction) 来优雅处理不可变状态。
+dva-immer 依赖 [immer](https://immerjs.github.io/immer/docs/introduction) 来优雅处理不可变状态。（备注：如果想在项目中轻量引入不可变状态管理的话，可以考虑 immer.js）
 
 dva-loading 实现了自动处理 loading 状态。
 
@@ -73,6 +73,30 @@ dva-loading 实现了自动处理 loading 状态。
 ## dva-core
 
 dva-core 由于集成了 redux 和 redux-saga。那么在对于应用的状态管理和副作用管理这两种场景应该具备强大的能力。
+
+首先来看 dva-core 导出了什么内容，如下所示：
+
+```bash
+{
+  saga: {
+    runSaga: [Getter],
+    ...
+    effects: {
+      ...
+    },
+    utils: {
+      ...
+    },
+    default: [Function: sagaMiddlewareFactory]
+  },
+  create: [Function: create],
+  utils: {
+    ...
+  }
+}
+```
+
+上图是被我精简过的，主要有redux-saga
 
 ### 模型注册：model & unmodel
 

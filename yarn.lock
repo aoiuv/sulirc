@@ -1562,6 +1562,21 @@ dva-core@^2.0.1:
     redux-saga "^0.16.0"
     warning "^3.0.0"
 
+dva-immer@^0.4.18:
+  version "0.4.18"
+  resolved "https://registry.yarnpkg.com/dva-immer/-/dva-immer-0.4.18.tgz#16b230c939c2513a4c84f5e2f255b44cc1806f3a"
+  integrity sha512-kG5jOax09yTUyqnStjbLpAunF0Po0lGdMrXBRgHFg3k6YeDsazbyb1HiQNfCLKN0Gu8Me0RCze4aP9Af2Jrh1w==
+  dependencies:
+    "@babel/runtime" "^7.0.0"
+    immer "^2.1.1"
+
+dva-loading@^3.0.19:
+  version "3.0.19"
+  resolved "https://registry.yarnpkg.com/dva-loading/-/dva-loading-3.0.19.tgz#843ada94744b9cb21d00614d99b01e78f8bdb7d1"
+  integrity sha512-tv30outk4mAVAhOIlh+yrJ8hKF+bYMHLS1VO3Fg82sGhpb2SDGDjU+Wi2Ylv84kW1IyMJzxE+IbrYv1SSRkWvQ==
+  dependencies:
+    "@babel/runtime" "^7.0.0"
+
 dva@^2.4.1:
   version "2.4.1"
   resolved "https://registry.yarnpkg.com/dva/-/dva-2.4.1.tgz#a3eeb07bb8bc6e2ff9ffe31799d03cb69e45f5fd"
@@ -2061,6 +2076,11 @@ ignore-walk@^3.0.1:
   resolved "https://registry.yarnpkg.com/ignore-walk/-/ignore-walk-3.0.1.tgz#a83e62e7d272ac0e3b551aaa82831a19b69f82f8"
   dependencies:
     minimatch "^3.0.4"
+
+immer@^2.1.1:
+  version "2.1.5"
+  resolved "https://registry.yarnpkg.com/immer/-/immer-2.1.5.tgz#0389947455c5a2c7a47f1e6f415c9d1a62a1ebed"
+  integrity sha512-xyjQyTBYIeiz6jd02Hg12jV+9QISwF1crLcwTlzHpWH4e0ryNWj1kacpTwimK3bJV5NKKXw458G2vpqoB/inFA==
 
 import-local@^2.0.0:
   version "2.0.0"
