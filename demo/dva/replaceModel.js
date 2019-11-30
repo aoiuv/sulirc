@@ -1,9 +1,10 @@
 require('babel-polyfill');
 
 const expect = require('../../utils/expect');
-const { create } = require('dva-core');
+const { saga, create } = require('dva-core');
 const app = create();
 
+const { delay } = saga;
 
 app.model({
   namespace: 'users',
@@ -13,37 +14,53 @@ app.model({
       return [...state, payload];
     },
   },
-});
-app.start();
-
-const oldCount = app._models.length;
-
-app.replaceModel({
-  namespace: 'users',
-  state: ['bar', 'baz'],
-  reducers: {
-    add(state, { payload }) {
-      return [...state, 'world', payload];
-    },
-    clear() {
-      return [];
+  effects: {
+    *fetch(_, { put }) {
+      yield delay(200);
+      yield put({ type: 'add', payload: '{data}' });
     },
   },
 });
+app.start();
+console.log(app._models[1]);
+console.log(app._models[1].reducers);
+console.log(app._models[1].effects);
 
-expect(app._models.length).toEqual(oldCount);
-let state = app._store.getState();
-expect(state.users).toEqual(['foo']);
+const oldCount = app._models.length;
+app._store.dispatch({ type: 'users/fetch' })
+console.log('state', app._store.getState());
 
-app._store.dispatch({ type: 'users/add', payload: 'jack' });
-state = app._store.getState();
-expect(state.users).toEqual(['foo', 'world', 'jack']);
+setTimeout(() => {
+  console.log('state', app._store.getState());
+}, 300);
 
-// test new added action
-app._store.dispatch({ type: 'users/clear' });
+// app.replaceModel({
+//   namespace: 'users',
+//   state: ['bar', 'baz'],
+//   reducers: {
+//     add(state, { payload }) {
+//       console.log('state', state);
+//       return [...state, 'world', payload];
+//     },
+//     clear() {
+//       return [];
+//     },
+//   },
+// });
 
-state = app._store.getState();
-expect(state.users).toEqual([]);
+// expect(app._models.length).toEqual(oldCount);
+// let state = app._store.getState();
+// expect(state.users).toEqual(['foo']);
+
+// app._store.dispatch({ type: 'users/add', payload: 'jack' });
+// state = app._store.getState();
+// expect(state.users).toEqual(['foo', 'world', 'jack']);
+
+// // test new added action
+// app._store.dispatch({ type: 'users/clear' });
+
+// state = app._store.getState();
+// expect(state.users).toEqual([]);
 
 // app.model({
 //   namespace: "users",

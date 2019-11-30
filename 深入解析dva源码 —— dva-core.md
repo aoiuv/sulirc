@@ -74,7 +74,17 @@ dva-immer 依赖 [immer](https://immerjs.github.io/immer/docs/introduction) 来�
 
 dva-loading 实现了自动处理 loading 状态。
 
-dva-immer 和 dva-loading 其实都是作为 dva-core 的插件。
+dva-immer 和 dva-loading 其实都是作为 dva-core 的插件存在的。
+
+```js
+const { create, saga } = require('dva-core');
+const createImmerPlugin = require('dva-immer');
+const createLoadingPlugin = require('dva-loading');
+
+const app = create();
+app.use(createImmerPlugin());
+app.use(createLoadingPlugin());
+```
 
 当然， dva 核心依赖了 dva-core。本文的重点也在于此。
 
@@ -170,12 +180,131 @@ export function create(hooksAndOpts = {}, createOpts = {}) {
 
 因为在一开始设置的 model 方法，只是简单更新了 app.\_models 列表。而 injectModel 才处理 model 相关的逻辑。
 
-由此大概整理了 create 之后的几个 api 的来源。所以，接下来可以将进一步分析啦。
+而 unmodel、replaceModel 方法在 app.start()之前都不存在。
 
-### 模型注册与更新：model、unmodel
+由此大概整理了 create 之后的几个 api 的来源。
 
+### 模型注册：model
+
+顾名思义，就是注册 dva 模型，以及相反操作取消注册。
+
+model 函数，本质上就是将重新定义命名空间的模型推入内部的模型列表。
+
+```js
+function model(m) {
+  const prefixedModel = prefixNamespace({ ...m });
+  app._models.push(prefixedModel);
+  return prefixedModel;
+}
+```
+
+prefixNamespace 函数实际上将模型上用户定义的 reducers 和 effects 的 key 映射在此模型的命名空间下。比如以下 model：
+
+```js
+app.model({
+  namespace: 'users',
+  state: ['foo'],
+  reducers: {
+    add(state, { payload }) {
+      return [...state, payload];
+    },
+  },
+  effects: {
+    *fetch(_, { put }) {
+      yield delay(200);
+      yield put({ type: 'add', payload: '{data}' });
+    },
+  },
+});
+```
+
+里面的 model 在经过 prefixNamespace 之后：
+
+```js
+{
+  namespace: 'users',
+  state: [ 'foo' ],
+  reducers: { 'users/add': [Function: add] },
+  effects: { 'users/fetch': [GeneratorFunction: fetch] }
+}
+```
+
+因此，经过 prefixNamespace 的所有的 model 的 reducers 和 effects 在最后汇总成一个对象的时候，也可以错落有致的归类。
+
+当然，这只是新增模型和重新映射 key 而已。我们前面提到，model 函数实际上是 injectModel 柯里化后的产生的函数。因此我们有必要在 injectModel 函数里看到底干了什么事情、
+
+```js
+function injectModel(createReducer, onError, unlisteners, m) {
+  m = model(m);
+
+  const store = app._store;
+  store.asyncReducers[m.namespace] = getReducer(m.reducers, m.state, plugin._handleActions);
+  store.replaceReducer(createReducer());
+  if (m.effects) {
+    store.runSaga(app._getSaga(m.effects, m, onError, plugin.get('onEffect'), hooksAndOpts));
+  }
+  if (m.subscriptions) {
+    unlisteners[m.namespace] = runSubscription(m.subscriptions, m, app, onError);
+  }
+}
+```
+
+### 移除模型：unmodel
+
+接下来，我们看 unmodel 干了什么事情
+
+```js
+function unmodel(createReducer, reducers, unlisteners, namespace) {
+  const store = app._store;
+
+  // 删除reducers
+  delete store.asyncReducers[namespace];
+  delete reducers[namespace];
+  store.replaceReducer(createReducer());
+  store.dispatch({ type: '@@dva/UPDATE' });
+
+  // 通过分发一个内部事件，取消副作用
+  store.dispatch({ type: `${namespace}/@@CANCEL_EFFECTS` });
+
+  // 取消监听这个命名空间的所有订阅
+  unlistenSubscription(unlisteners, namespace);
+
+  // 在app的内部models列表里删除此模型
+  app._models = app._models.filter(model => model.namespace !== namespace);
+}
+```
 
 ### 更新模型：replaceModel
+
+可以在 app.start()之后替换或新增已有模型。
+
+```js
+function replaceModel(createReducer, reducers, unlisteners, onError, m) {
+  const store = app._store;
+  const { namespace } = m;
+  const oldModelIdx = findIndex(app._models, model => model.namespace === namespace);
+
+  if (~oldModelIdx) {
+    // 通过分发一个内部事件，取消副作用
+    store.dispatch({ type: `${namespace}/@@CANCEL_EFFECTS` });
+
+    // 删除reducers
+    delete store.asyncReducers[namespace];
+    delete reducers[namespace];
+
+    // 取消监听这个命名空间之前的所有订阅
+    unlistenSubscription(unlisteners, namespace);
+
+    // 在app的内部models列表里删除此模型
+    app._models.splice(oldModelIdx, 1);
+  }
+
+  // 直接更新此模型
+  app.model(m);
+
+  store.dispatch({ type: '@@dva/UPDATE' });
+}
+```
 
 ### 同步操作处理：reducers
 
