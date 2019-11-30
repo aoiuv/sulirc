@@ -1,8 +1,8 @@
 ## 前言
 
-关于 Dva 源码解析，官网已有相关指南 [Dva 源码解析](https://dvajs.com/guide/source-code-explore.html)。本文虽然也是称作精度源码，但不同之处在于：
+关于 Dva 源码解析，官网已有相关指南 [Dva 源码解析](https://dvajs.com/guide/source-code-explore.html)。本文虽然也是精读源码，但不同之处在于：
 
-1. 着重介绍 dva-core 源码实现
+1. 着重介绍 dva-core 源码实现（dva 底层依赖 dva-core）
 2. 探讨对于 dva-core 的更多场景下的用法
 
 好了言归正传，笔者在半年以前，提起 redux 这些框架总会不自觉的与 react 相关联，事实上真的这些框架脱离了 react 难道就无法使用了么？以及如何扩展使用这些框架达成我们的应用需求呢？
@@ -12,6 +12,12 @@
 因此，本篇文章主要目的是：**精读 dva-core 源码的同时，也探讨一下 dva-core 的其他使用场景**，比如构建具有状态管理需求的 SDK 等等。
 
 由于 dva-core 依赖了 redux 和 redux-saga。在介绍 dva-core 之前，还是先简单熟悉一下两者的基本概念。
+
+依赖方向：
+
+```
+dva <- dva-core <- redux-saga | redux
+```
 
 ## 关于 redux
 
@@ -33,8 +39,8 @@ reducer 需要保持两个原则，第一是保持纯函数特性，第二是保
 从示例使用上即可明朗：
 
 ```js
-import { createStore, applyMiddleware } from "redux";
-import createSagaMiddleware from "redux-saga";
+import { createStore, applyMiddleware } from 'redux';
+import createSagaMiddleware from 'redux-saga';
 
 // create the saga middleware
 const sagaMiddleware = createSagaMiddleware();
@@ -68,39 +74,108 @@ dva-immer 依赖 [immer](https://immerjs.github.io/immer/docs/introduction) 来�
 
 dva-loading 实现了自动处理 loading 状态。
 
+dva-immer 和 dva-loading 其实都是作为 dva-core 的插件。
+
 当然， dva 核心依赖了 dva-core。本文的重点也在于此。
 
 ## dva-core
 
 dva-core 由于集成了 redux 和 redux-saga。那么在对于应用的状态管理和副作用管理这两种场景应该具备强大的能力。
 
-首先来看 dva-core 导出了什么内容，如下所示：
+dva-core 包只导出了三个主要的 API: create、saga、utils。我们大体上可以忽略后面二者。将注意力集中在 create 上。
 
-```bash
+首先，使用 create 创建一个最简单的 app 对象。
+
+```js
+const { create } = require('dva-core');
+const app = create();
+app.start();
+```
+
+打印 app 对象如下：
+
+```js
 {
-  saga: {
-    runSaga: [Getter],
-    ...
-    effects: {
-      ...
-    },
-    utils: {
-      ...
-    },
-    default: [Function: sagaMiddlewareFactory]
-  },
-  create: [Function: create],
-  utils: {
-    ...
+  // private
+  _models: [ { namespace: '@@dva', state: 0, reducers: [Object] } ],
+  _store:
+   { dispatch: [Function],
+     subscribe: [Function: subscribe],
+     getState: [Function: getState],
+     replaceReducer: [Function: replaceReducer],
+     runSaga: [Function: bound runSaga],
+     asyncReducers: {},
+     [Symbol(observable)]: [Function: observable] },
+  _plugin:
+   Plugin {
+     _handleActions: null,
+     hooks:
+      { onError: [],
+        onStateChange: [],
+        onAction: [],
+        onHmr: [],
+        onReducer: [],
+        onEffect: [],
+        extraReducers: [],
+        extraEnhancers: [],
+        _handleActions: [] } },
+  _getSaga: [Function: bound getSaga],
+  // public
+  start: [Function: start],
+  use: [Function: bound use],
+  model: [Function: bound injectModel],
+  unmodel: [Function: bound unmodel],
+  replaceModel: [Function: bound replaceModel]
+};
+```
+
+我们忽略以下划线开头对象，因为语义上一般我们认为是私有属性。于是我们关注其他属性可以发现，存在以下几个 api：**start、use、model、unmodel、replaceModel**。
+
+精简 `dva/packages/dva-core/src/index.js` 中的代码发现，的确如此。
+
+```js
+// ...
+export function create(hooksAndOpts = {}, createOpts = {}) {
+  // ...
+  const plugin = new Plugin();
+  // 挂载了use、model、start方法
+  const app = {
+    use: plugin.use.bind(plugin),
+    model,
+    start,
+  };
+  return app;
+
+  function model(m) {
+    // ...
+    const prefixedModel = prefixNamespace({ ...m });
+    app._models.push(prefixedModel);
+    return prefixedModel;
+  }
+  function injectModel(createReducer, onError, unlisteners, m) {}
+  function unmodel(createReducer, reducers, unlisteners, namespace) {}
+  function replaceModel(createReducer, reducers, unlisteners, onError, m) {}
+  function start() {
+    // ...
+    // 更新挂载 model、unmodel、replaceModel
+    app.model = injectModel.bind(app, createReducer, onError, unlisteners);
+    app.unmodel = unmodel.bind(app, createReducer, reducers, unlisteners);
+    app.replaceModel = replaceModel.bind(app, createReducer, reducers, unlisteners, onError);
+    // ...
   }
 }
 ```
 
-上图是被我精简过的，主要有redux-saga
+这里我们注意到 app.model 方法实际上在 start()里通过 `injectModel.bind(app, createReducer, onError, unlisteners)`柯里化后更新了。
 
-### 模型注册：model & unmodel
+因为在一开始设置的 model 方法，只是简单更新了 app.\_models 列表。而 injectModel 才处理 model 相关的逻辑。
 
-### 替换模型：replaceModel
+由此大概整理了 create 之后的几个 api 的来源。所以，接下来可以将进一步分析啦。
+
+### 模型注册与更新：model、unmodel
+
+
+### 更新模型：replaceModel
 
 ### 同步操作处理：reducers
 

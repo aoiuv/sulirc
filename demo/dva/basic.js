@@ -11,26 +11,27 @@ function enhancer(reducer) {
 }
 
 const app = create({
-  onStateChange(state) {
-    console.log('on state change', state);
-  }
+  // onStateChange(state) {
+  //   console.log('on state change', state);
+  // }
 });
 
-app.model({
-  namespace: "count",
-  state: 3,
-  reducers: [
-    {
-      add(state, { payload }) {
-        return state + (payload || 1);
-      }
-    },
-    enhancer
-  ]
-});
+// app.model({
+//   namespace: "count",
+//   state: 3,
+//   reducers: [
+//     {
+//       add(state, { payload }) {
+//         return state + (payload || 1);
+//       }
+//     },
+//     enhancer
+//   ]
+// });
 app.start();
 
-app._store.dispatch({ type: "square" });
-app._store.dispatch({ type: "count/add" });
+// app._store.dispatch({ type: "square" });
+// app._store.dispatch({ type: "count/add" });
 
-console.log(app._store.getState())
+// console.log(app._store.getState())
+console.log(app);

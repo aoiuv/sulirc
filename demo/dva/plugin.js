@@ -3,20 +3,22 @@ require("babel-polyfill");
 const { create, saga } = require("dva-core");
 const dvaImmer = require("dva-immer");
 const createLoading = require("dva-loading");
+const { log, green, red } = require('../../utils/log')
 
 // const delay = timeout => new Promise(resolve => setTimeout(resolve, timeout));
 const createOnEffectLogger = () => ({
   onEffect(effect, _, model, key) {
     return function*(...args) {
-      console.log("effect logger", ...args);
+      red("effect logger");
+      log(...args)
       yield effect(...args);
     };
   }
 });
 const app = create({
   onStateChange(state) {
-    console.log("state change");
-    console.log(state);
+    green("state change");
+    log(state);
   }
 });
 
@@ -53,7 +55,6 @@ app.model({
   effects: {
     *fetchChar({ payload }, { put, call }) {
       yield saga.delay(300);
-      // yield call(delay, 100);
       yield put({ type: "setChar", payload });
     }
   }
