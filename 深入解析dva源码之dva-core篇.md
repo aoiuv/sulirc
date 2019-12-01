@@ -116,6 +116,7 @@ app.start();
 精简 `dva/packages/dva-core/src/index.js` 中的代码发现，的确如此。
 
 ```js
+// dva/packages/dva-core/src/index.js
 // ...
 export function create(hooksAndOpts = {}, createOpts = {}) {
   // ...
@@ -163,6 +164,7 @@ export function create(hooksAndOpts = {}, createOpts = {}) {
 model 函数，本质上就是将重新定义命名空间的模型推入内部的模型列表。
 
 ```js
+// dva/packages/dva-core/src/index.js
 function model(m) {
   const prefixedModel = prefixNamespace({ ...m });
   app._models.push(prefixedModel);
@@ -208,6 +210,7 @@ app.model({
 当然，这只是新增模型和重新映射 key 而已。我们前面提到，model 函数实际上是 injectModel 柯里化后的产生的函数。因此我们有必要在 injectModel 函数里看到底干了什么事情、
 
 ```js
+// dva/packages/dva-core/src/index.js
 function injectModel(createReducer, onError, unlisteners, m) {
   // 推入模型到内部模型列表
   m = model(m);
@@ -228,6 +231,7 @@ function injectModel(createReducer, onError, unlisteners, m) {
 我们首先来看`store.asyncReducers[m.namespace] = getReducer(m.reducers, m.state, plugin._handleActions);`这一句，里面的的确确干了很多事情。来，我们深入分析。
 
 ```js
+// dva/packages/dva-core/src/getReducer.js
 import defaultHandleActions from "./handleActions";
 
 export default function getReducer(reducers, state, handleActions) {
@@ -284,6 +288,7 @@ handlerActions 其实就是入口 getReducer 中传入 plugin.\_handleActions。
 而我们来看 defaultHandleActions，也即是以下代码的 handleActions。
 
 ```js
+// dva/packages/dva-core/src/handleActions.js
 // 可以想象为一个大型的 switch case 语句，type匹配的时候才使用对应的reducer
 function handleAction(actionType, reducer = identify) {
   return (state, action) => {
@@ -327,14 +332,25 @@ export default handleActions;
 
 同学们，上述文字的意思很明显，如果开发者有 code splitting 或者 动态加载 reducers 的需求，那需要这个 api 来进行热重载。
 
-结合 dva-core 的代码来看，asyncReducers 就是动态加载 reducers。具体理解就是说在 app.start()之后的 app.model()中的 reducers 就会被划分在 asyncReducers 里面。因此也就需要热重载。因为在 redux 里，reducers 其实是文件里的一个对象，在初始化的 createStore 的时候就确定了。而在 dva-core 中，app.start()时即进行了 createStore 操作，所以需要 replaceReducer 来指示 redux，替换更新 reducers 对象
+结合 dva-core 的代码来看，asyncReducers 就是动态加载 reducers。具体理解就是说在 app.start()之后的 app.model()中的 reducers 就会被划分在 asyncReducers 里面。因此也就需要热重载。因为在 redux 里，reducers 其实是文件里的一个对象，在初始化的 createStore 的时候就确定了。而在 dva-core 中，app.start()时即进行了 createStore 操作，所以需要 replaceReducer 来指示 redux，替换更新 reducers 对象。
+
+那么我们看 createReducer 函数，其实就是将以下四者的一个有机整合：
+
+1. app.start 之前确定的静态 reducers
+2. plugin.get('extraReducers')中获取的附加 reducers
+3. app.start 之后新增的动态 asyncReducers
+4. 以及通过 plugin.get('onReducer')获取的，将以上三者进行增强的 enhancer
+
+代码如下：
 
 ```js
+// dva/packages/dva-core/src/index.js
 function createReducer() {
   // reducerEnhancer => plugin.get('onReducer')
   return reducerEnhancer(
     combineReducers({
       ...reducers,
+      // extraReducers => plugin.get('extraReducers');
       ...extraReducers,
       ...(app._store ? app._store.asyncReducers : {})
     })
@@ -342,11 +358,29 @@ function createReducer() {
 }
 ```
 
-### 移除模型：unmodel
-
-接下来，我们看 unmodel 干了什么事情
+在 injectModel 里最后两句判断语句，其实就是在注册 effects 和 subscriptions。
 
 ```js
+if (m.effects) {
+  // 注册 effects
+  store.runSaga(app._getSaga(m.effects, m, onError, plugin.get("onEffect"), hooksAndOpts));
+}
+if (m.subscriptions) {
+  // 注册 subscriptions。
+  unlisteners[m.namespace] = runSubscription(m.subscriptions, m, app, onError);
+}
+```
+
+runSaga 其实就是 sagaMiddleware.run。通过 app.\_getSaga 同样封装返回了一个巨大的 saga。具体逻辑下文会深入描述。
+
+runSubscription 将所有写在 model 的里的 subscriptions 运行，并将每个 subscription 返回的取消订阅事件的函数，收集后返回出去。具体逻辑下文同样会深入描述。
+
+### 移除模型：unmodel
+
+接下来，我们看 unmodel 干了什么事情。如果大家理解了上面的 model 函数。下面的 unmodel 函数自然不难理解。
+
+```js
+// dva/packages/dva-core/src/index.js
 function unmodel(createReducer, reducers, unlisteners, namespace) {
   const store = app._store;
 
@@ -367,11 +401,19 @@ function unmodel(createReducer, reducers, unlisteners, namespace) {
 }
 ```
 
+从语义上来看，unmodel 是取消注册一个模型，如何做到干净的移除这个模型呢？分以下几步：
+
+1. 删除所有该模型命名空间的静态、动态 reducers。并通知 redux、dva。
+2. 通过分发一个内部事件 `${namespace}/@@CANCEL_EFFECTS` 来通知取消 effects 副作用。
+3. 执行该模型所有订阅函数返回的取消订阅函数。
+4. 从内部的模型列表中过滤删除此模型。
+
 ### 更新模型：replaceModel
 
-可以在 app.start()之后替换或新增已有模型。
+可以在 app.start()之后替换或新增已有模型。逻辑大致与 model、unmodel 类似。同学们可以参照上述二者理解。
 
 ```js
+// dva/packages/dva-core/src/index.js
 function replaceModel(createReducer, reducers, unlisteners, onError, m) {
   const store = app._store;
   const { namespace } = m;
@@ -399,25 +441,132 @@ function replaceModel(createReducer, reducers, unlisteners, onError, m) {
 }
 ```
 
-### 同步操作处理：reducers
-
-> 用于处理同步操作，唯一可以修改 state 的地方。由 action 触发。
-
-格式为 (state, action) => newState 或 [(state, action) => newState, enhancer]
-
-### 副作用处理：effects
-
-> 用于处理异步操作和业务逻辑，不直接修改 state。由 action 触发，可以触发 action。
-
-格式为 _(action, effects) => void 或 [_(action, effects) => void, { type }]。
-
 ### 订阅：subscriptions
 
-格式为 ({ dispatch, history }, done) => unlistenFunction。
+执行订阅函数如下：
 
-### 配置钩子：create(opts)
+```js
+// dva/packages/dva-core/src/subscription.js
+export function run(subs, model, app, onError) {
+  const funcs = [];
+  const nonFuncs = [];
+  for (const key in subs) {
+    // 只执行用户编写的订阅函数
+    if (Object.prototype.hasOwnProperty.call(subs, key)) {
+      const sub = subs[key];
+      const unlistener = sub(
+        {
+          dispatch: prefixedDispatch(app._store.dispatch, model),
+          history: app._history
+        },
+        onError
+      );
+      // 期望返回的是取消订阅函数
+      if (isFunction(unlistener)) {
+        funcs.push(unlistener);
+      } else {
+        nonFuncs.push(key);
+      }
+    }
+  }
+  return { funcs, nonFuncs };
+}
+```
 
-### 注册插件：app.use(plugin)
+从 sub 的调用来看，传参格式为 ({ dispatch, history }, onError) => unlistenFunction。
+
+dva 倡导大家写订阅函数的时候一定要返回取消订阅函数，就比如存在 addEventListener 就一定得存在 removeEventListener。这才是良好的开发习惯。同样在 React 的 useEffect 钩子里，也是如此。
+
+如果开发者不返回取消订阅函数，在会被归类到 nonFuncs 里。在 unmodel、replaceModel 的时候则会喜提 dva 送你的大大的 warning。
+
+```js
+// dva/packages/dva-core/src/subscription.js
+export function unlisten(unlisteners, namespace) {
+  if (!unlisteners[namespace]) return;
+
+  const { funcs, nonFuncs } = unlisteners[namespace];
+  // dva不想看到你不写取消订阅函数，并毫不客气地向你丢了一个警告。
+  warning(
+    nonFuncs.length === 0,
+    `[app.unmodel] subscription should return unlistener function, check these subscriptions ${nonFuncs.join(
+      ", "
+    )}`
+  );
+  // 遍历执行取消订阅的函数
+  for (const unlistener of funcs) {
+    unlistener();
+  }
+  delete unlisteners[namespace];
+}
+```
+
+### 浅谈 reducers
+
+reducers 是唯一可以修改 state 的地方。由 action 触发。
+
+dva-core 所处理的部分上文有解释过，大体上来说就是将 reducers 的重新映射到对应命名空间。同时收集动态、静态、附加 reducers、以及通过 enhancer 增强处理。剩余的就是 redux 的工作了。
+
+enhancer 的来源有 `enhancers = [applyMiddleware(...middlewares), ...extraEnhancers]`。其中 extraEnhancers 通过 plugin.get('extraEnhancers') 获取。applyMiddleware(...middlewares)则是将里面所有中间件在 redux 中注入{ getState, dispatch }的 api 后，再组合（compose）所有中间件之后返回出去。
+
+redux 中间件的约定格式：
+
+```js
+const reduxMiddleware = store => next => action => {
+  // ...
+  next(action);
+  // => dispatch(action)
+};
+```
+
+其中 next 就是注入的 dispatch。
+
+本质上 **applyMiddleware 所做的工作是将 store.dispatch 通过注入的中间件不断增强**，一层套一层（可以一定程度上参考 koa 中的中间件），最终返回的就是基本上是`{ getState, dispatch }`，但是里面的 dispatch 却是一个 compose 了所有中间件的 dispatch 了。
+
+这一整套逻辑里面运用了大量的高阶函数、函数组合的技巧，的确让人头晕，建议大家可以自行整理一下。
+
+帮助理解方式，结合**函数堆栈的压栈和弹栈**，这套中间件感觉就像是在打乒乓球一样，来回来回，的确十分有趣。
+
+```js
+// dva/packages/dva-core/src/createStore.js
+// ...
+// applyMiddleware这套逻辑得去redux里看。上文有描述。
+const enhancers = [applyMiddleware(...middlewares), ...extraEnhancers];
+// 再一次的compose enhancers，然后createStore也是去redux里看。
+return createStore(reducers, initialState, composeEnhancers(...enhancers));
+```
+
+可以看到，无论是 redux 还是 dva。compose，也即是 reduce 都用到飞起。这里面涉及到了函数式编程里的函数组合概念，的确是高级、简洁又有用。
+
+经过了这么多弯弯绕绕，带来的效果就是，dispatch 操作在走到 reducers 之前，必然得先经过层层中间件，最后才是最初的那个 dispatch 发挥它的作用。
+
+## 关于 effects
+
+effects 用于处理异步操作和业务逻辑，不直接修改 state。由 action 触发，可以触发 action。
+
+关于 effects，其实是 dva 依赖 redux-saga 的一种赋能。又对其在内部进行了一次封装。
+
+```js
+// dva/packages/dva-core/src/getSaga.js
+export default function getSaga(effects, model, onError, onEffect, opts = {}) {
+  // 返回了一个大大的 saga
+  return function*() {
+    for (const key in effects) {
+      if (Object.prototype.hasOwnProperty.call(effects, key)) {
+        const watcher = getWatcher(key, effects[key], model, onError, onEffect, opts);
+        // fork 是非阻塞调用
+        const task = yield sagaEffects.fork(watcher);
+        yield sagaEffects.fork(function*() {
+          // 提供了一种取消副作用的方式
+          yield sagaEffects.take(`${model.namespace}/@@CANCEL_EFFECTS`);
+          yield sagaEffects.cancel(task);
+        });
+      }
+    }
+  };
+}
+```
+
+## dva 的钩子和插件
 
 ## 关于 redux
 
@@ -435,21 +584,6 @@ reducer 需要保持两个原则，第一是保持纯函数特性，第二是保
 ## 关于 redux-saga
 
 如果说 redux 是可以处理纯函数情况的话，那么 [redux-saga](https://github.com/redux-saga/redux-saga) 则是对应用副作用的一种增强管理工具。redux-saga 是 redux 的中间件。
-
-示例使用：
-
-```js
-import { createStore, applyMiddleware } from "redux";
-import createSagaMiddleware from "redux-saga";
-
-// create the saga middleware
-const sagaMiddleware = createSagaMiddleware();
-// mount it on the Store
-const store = createStore(reducer, applyMiddleware(sagaMiddleware));
-
-// then run the saga
-sagaMiddleware.run(mySaga);
-```
 
 ## 小结
 
