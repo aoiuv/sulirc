@@ -1,11 +1,11 @@
-require('babel-polyfill');
+require("babel-polyfill");
 
-const { create, saga } = require('dva-core');
+const { create, saga } = require("dva-core");
 
 const app = create({
   onStateChange(state) {
-    console.log(`state change`, state);
-  },
+    // console.log(`state change`, state);
+  }
 });
 
 let count = 1;
@@ -13,7 +13,7 @@ let count = 1;
 app.use({
   onReducer: reducer => {
     return (state, action) => {
-      // console.log(`onReducer`, state, action);
+      console.log(`onReducer`, state, action);
       return reducer(state, action);
     };
   },
@@ -21,45 +21,52 @@ app.use({
     console.log(`onEffect`, model.state, model.namespace, key);
     return function*(...args) {
       count++;
-      console.log('effect', ...args);
+      console.log("effect", ...args);
       yield effect(...args);
     };
-  },
+  }
 });
 
 app.model({
-  namespace: 'users',
+  namespace: "users",
   state: [],
   reducers: {
     setter(state, { payload }) {
       return [...state, payload];
-    },
+    }
   },
   effects: {
-    *add({ payload }, { put }) {
+    *add({ payload }, { put, select }) {
       yield saga.delay(1000);
       yield put({
-        type: 'setter',
-        payload,
+        type: "setter",
+        payload
       });
+      return yield select(state => state);
     },
-    *prefix({ payload }, { put }) {
+    *prefix({ payload }, { put, select }) {
       yield saga.delay(1000);
       yield put({
-        type: 'add',
-        payload: `#${payload}`,
+        type: "add",
+        payload: `#${payload}`
       });
-    },
-  },
+      return yield select(state => state);
+    }
+  }
 });
 
 app.start();
 
-app._store.dispatch({ type: 'users/add', payload: 'sulirc' });
-app._store.dispatch({ type: 'users/prefix', payload: 'sulirc' });
+const ret = app._store.dispatch({ type: "users/setter", payload: "christina" });
+console.log("RET", ret);
+
+app._store.dispatch({ type: "users/add", payload: "sulirc" }).then(res => {
+  console.log("PROMISE", res);
+});
+// app._store.dispatch({ type: 'users/prefix', payload: 'sulirc' });
 
 // app._store.dispatch({ type: 'users/setter', payload: 'sulirc' });
 
 // console.log('sagas: ', Object.keys(saga));
 // console.log('saga effects: ', Object.keys(saga.effects));
-console.log('count', count);
+console.log("count", count);
