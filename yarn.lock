@@ -4143,6 +4143,10 @@ tmpl@1.0.x:
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/tmpl/-/tmpl-1.0.4.tgz#23640dd7b42d00433911140820e5cf440e521dd1"
 
+tng-hooks@^4.1.5:
+  version "4.1.5"
+  resolved "https://registry.yarnpkg.com/tng-hooks/-/tng-hooks-4.1.5.tgz#c06eadb9a51ec17cb410d78ef4ac3f40354bbab1"
+
 to-fast-properties@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/to-fast-properties/-/to-fast-properties-2.0.0.tgz#dc5e698cbd079265bc73e0377681a4e4e83f616e"
