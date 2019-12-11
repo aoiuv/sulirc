@@ -21,34 +21,34 @@ export function create(hooksAndOpts = {}, createOpts = {}) {
   }
 }
 
-const app = {
-  _models: [ { namespace: '@@dva', state: 0, reducers: [Object] } ],
-  _store:
-   { dispatch: [Function],
-     subscribe: [Function: subscribe],
-     getState: [Function: getState],
-     replaceReducer: [Function: replaceReducer],
-     runSaga: [Function: bound runSaga],
-     asyncReducers: {},
-     [Symbol(observable)]: [Function: observable] },
-  _plugin:
-   Plugin {
-     _handleActions: null,
-     hooks:
-      { onError: [],
-        onStateChange: [],
-        onAction: [],
-        onHmr: [],
-        onReducer: [],
-        onEffect: [],
-        extraReducers: [],
-        extraEnhancers: [],
-        _handleActions: [] } },
-  _getSaga: [Function: bound getSaga],
+// const app = {
+//   _models: [ { namespace: '@@dva', state: 0, reducers: [Object] } ],
+//   _store:
+//    { dispatch: [Function],
+//      subscribe: [Function: subscribe],
+//      getState: [Function: getState],
+//      replaceReducer: [Function: replaceReducer],
+//      runSaga: [Function: bound runSaga],
+//      asyncReducers: {},
+//      [Symbol(observable)]: [Function: observable] },
+//   _plugin:
+//    Plugin {
+//      _handleActions: null,
+//      hooks:
+//       { onError: [],
+//         onStateChange: [],
+//         onAction: [],
+//         onHmr: [],
+//         onReducer: [],
+//         onEffect: [],
+//         extraReducers: [],
+//         extraEnhancers: [],
+//         _handleActions: [] } },
+//   _getSaga: [Function: bound getSaga],
 
-  use: [Function: bound use],
-  model: [Function: bound injectModel],
-  start: [Function: start],
-  unmodel: [Function: bound unmodel],
-  replaceModel: [Function: bound replaceModel]
-};
+//   use: [Function: bound use],
+//   model: [Function: bound injectModel],
+//   start: [Function: start],
+//   unmodel: [Function: bound unmodel],
+//   replaceModel: [Function: bound replaceModel]
+// };
