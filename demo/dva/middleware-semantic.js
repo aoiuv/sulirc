@@ -7,50 +7,52 @@ function compose(...funcs) {
     return funcs[0];
   }
 
-  return funcs.reduce((a, b) => (...args) => a(b(...args)));
+  return funcs.reduce(function reducer(a, b) {
+    return function nextWrapper(...args) {
+      return a(b(...args));
+    };
+  });
 }
 
 function next(action) {
   console.log('[next]', action);
 }
 
-const fooMdw = next => {
+function fooMdw(next) {
   console.log('[middleware] foo next');
-  return action => {
+  return function next_from_foo(action) {
     console.log('[middleware] foo action before');
     next(action);
     console.log('[middleware] foo action after');
   };
-};
-// fooMdw.t = '[foo]';
+}
 
-const barMdw = next => {
+function barMdw(next) {
   console.log('[middleware] bar next');
-  return action => {
+  return function next_from_bar(action) {
     console.log('[middleware] bar action before');
     next(action);
     console.log('[middleware] bar action after');
   };
-};
-// barMdw.t = '[bar]';
+}
 
-const bazMdw = next => {
+function bazMdw(next) {
   console.log('[middleware] baz next');
-  return action => {
+  return function next_from_baz(action) {
     console.log('[middleware] baz action before');
     next(action);
     console.log('[middleware] baz action after');
   };
-};
-// bazMdw.t = '[baz]';
+}
 
-// debugger;
+debugger;
 /**
  * compose sequence
  */
 const chain = compose(fooMdw, barMdw, bazMdw);
 // compose f = (...args) => foo(bar(...args))
 // compose g = (...args) => f(baz(...args))
+// chain = nextWrapper = (...args) => foo(bar(baz(...args)))
 // ========
 const nextChain = chain(next);
 // pass in `next` args
@@ -62,6 +64,7 @@ const nextChain = chain(next);
 // ========
 // nextChain = next_from_foo
 console.log('==============================');
+
 nextChain('{data}');
 // dispatch action
 // trigger next_from_foo until its next -> next_from_bar
