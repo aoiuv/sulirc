@@ -15,33 +15,33 @@ function compose(...funcs) {
 }
 
 function next(action) {
-  console.log('[next]', action);
+  console.log("[next]", action);
 }
 
-function fooMdw(next) {
-  console.log('[middleware] foo next');
+function fooMiddleware(next) {
+  console.log("[fooMiddleware] trigger");
   return function next_from_foo(action) {
-    console.log('[middleware] foo action before');
+    console.log("[fooMiddleware] before next");
     next(action);
-    console.log('[middleware] foo action after');
+    console.log("[fooMiddleware] after next");
   };
 }
 
-function barMdw(next) {
-  console.log('[middleware] bar next');
+function barMiddleware(next) {
+  console.log("[barMiddleware] trigger");
   return function next_from_bar(action) {
-    console.log('[middleware] bar action before');
+    console.log("[barMiddleware] before next");
     next(action);
-    console.log('[middleware] bar action after');
+    console.log("[barMiddleware] after next");
   };
 }
 
-function bazMdw(next) {
-  console.log('[middleware] baz next');
+function bazMiddleware(next) {
+  console.log("[bazMiddleware] trigger");
   return function next_from_baz(action) {
-    console.log('[middleware] baz action before');
+    console.log("[bazMiddleware] before next");
     next(action);
-    console.log('[middleware] baz action after');
+    console.log("[bazMiddleware] after next");
   };
 }
 
@@ -49,23 +49,23 @@ debugger;
 /**
  * compose sequence
  */
-const chain = compose(fooMdw, barMdw, bazMdw);
+const chain = compose(fooMiddleware, barMiddleware, bazMiddleware);
 // compose f = (...args) => foo(bar(...args))
 // compose g = (...args) => f(baz(...args))
 // chain = nextWrapper = (...args) => foo(bar(baz(...args)))
 // ========
 const nextChain = chain(next);
 // pass in `next` args
-// tigger mdw sequence: baz -> bar -> foo
+// tigger Middlware sequence: baz -> bar -> foo
 // ========
 // baz: next_from_baz = (action) => { ... next(action) ... };
 // bar: next_from_bar = (action) => { ... next_from_baz(action) ... };
 // foo: next_from_foo = (action) => { ... next_from_bar(action) ... };
 // ========
 // nextChain = next_from_foo
-console.log('==============================');
 
-nextChain('{data}');
+nextChain("{data}");
+
 // dispatch action
 // trigger next_from_foo until its next -> next_from_bar
 // trigger next_from_bar until its next -> next_from_baz
@@ -75,3 +75,7 @@ nextChain('{data}');
 // return from next_from_baz, resume next_from_bar
 // return from next_from_bar, resume next_from_foo
 // all finish
+
+console.log('==============================');
+console.log(chain);
+console.log(nextChain);
