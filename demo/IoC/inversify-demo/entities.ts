@@ -1,5 +1,5 @@
-import { injectable, inject } from 'inversify';
 import 'reflect-metadata';
+import { injectable, inject } from 'inversify';
 import { Weapon, ThrowableWeapon, Warrior } from './interfaces';
 import { TYPES } from './types';
 
