@@ -5,6 +5,7 @@ createHeaderSep('custom');
 function classDecorator(): ClassDecorator {
   return target => {
     // 在类上定义元数据，key 为 `classMetaData`，value 为 `a`
+    console.log('class', target);
     Reflect.defineMetadata('classMetaData', 'a', target);
   };
 }
@@ -12,6 +13,7 @@ function classDecorator(): ClassDecorator {
 function methodDecorator(): MethodDecorator {
   return (target, key, descriptor) => {
     // 在类的原型属性 'someMethod' 上定义元数据，key 为 `methodMetaData`，value 为 `b`
+    console.log('method', target, key, descriptor);
     Reflect.defineMetadata('methodMetaData', 'b', target, key);
   };
 }
