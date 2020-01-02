@@ -6,7 +6,9 @@
   "author": "sulirc <ygj2awww@gmail.com>",
   "license": "MIT",
   "type": "module",
-  "scripts": {},
+  "scripts": {
+    "demo:ioc": "cd demo/ && tsnd -P ./IoC/tsconfig.json --respawn ./IoC/main.ts"
+  },
   "dependencies": {
     "babel-polyfill": "^6.26.0",
     "chalk": "^3.0.0",
@@ -33,6 +35,9 @@
     "@babel/cli": "^7.5.0",
     "@babel/core": "^7.5.4",
     "@babel/preset-env": "^7.5.4",
-    "@babel/runtime": "^7.7.2"
+    "@babel/runtime": "^7.7.2",
+    "@types/node": "^13.1.2",
+    "ts-node-dev": "^1.0.0-pre.44",
+    "typescript": "^3.7.4"
   }
 }

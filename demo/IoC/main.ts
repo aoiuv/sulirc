@@ -1,0 +1,1 @@
+import './inversify-demo/index';
