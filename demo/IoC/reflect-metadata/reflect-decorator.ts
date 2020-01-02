@@ -1,3 +1,7 @@
+import { createHeaderSep } from "../utils";
+
+createHeaderSep('reflect');
+
 @Reflect.metadata('inClass', 'A')
 class Test {
   @Reflect.metadata('inMethod', 'B')

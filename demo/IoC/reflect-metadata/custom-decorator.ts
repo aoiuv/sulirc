@@ -1,3 +1,7 @@
+import { createHeaderSep } from "../utils";
+
+createHeaderSep('custom');
+
 function classDecorator(): ClassDecorator {
   return target => {
     // 在类上定义元数据，key 为 `classMetaData`，value 为 `a`

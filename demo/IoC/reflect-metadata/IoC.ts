@@ -1,3 +1,7 @@
+import { createHeaderSep } from "../utils";
+
+createHeaderSep('IoC');
+
 type Constructor<T = any> = new (...args: any[]) => T;
 
 const Injectable = (): ClassDecorator => target => {};

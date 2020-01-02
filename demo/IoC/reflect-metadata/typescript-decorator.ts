@@ -1,4 +1,7 @@
 import { isFunction } from 'lodash';
+import { createHeaderSep } from "../utils";
+
+createHeaderSep('typescript');
 
 const METHOD_METADATA = 'method';
 const PATH_METADATA = 'path';
