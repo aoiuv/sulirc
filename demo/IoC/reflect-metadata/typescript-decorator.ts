@@ -1,5 +1,5 @@
 import { isFunction } from 'lodash';
-import { createHeaderSep } from "../utils";
+import { createHeaderSep } from '../utils';
 
 createHeaderSep('typescript');
 
@@ -9,6 +9,7 @@ const PATH_METADATA = 'path';
 const Controller = (path: string): ClassDecorator => {
   return target => {
     Reflect.defineMetadata(PATH_METADATA, path, target);
+    // Reflect.defineMetadata(METHOD_METADATA, 'MAIN', target);
   };
 };
 
@@ -48,6 +49,9 @@ function mapRoute(instance: Object) {
 
   // 筛选出类的 methodName
   const methodsNames = Object.getOwnPropertyNames(prototype).filter(item => !isConstructor(item) && isFunction(prototype[item]));
+
+  console.log('propertyNames', Object.getOwnPropertyNames(prototype));
+  console.log('methodsNames', methodsNames);
 
   return methodsNames.map(methodName => {
     const fn = prototype[methodName];
