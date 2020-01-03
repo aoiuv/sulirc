@@ -39,4 +39,4 @@ const Factory = <T>(target: Constructor<T>): T => {
   return new target(...args);
 };
 
-Factory(TestService).testMethod(); // 1
+Factory(TestService).testMethod(); // output: 1 yey!
