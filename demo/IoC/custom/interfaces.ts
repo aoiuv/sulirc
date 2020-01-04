@@ -8,9 +8,7 @@ namespace interfaces {
   export type ServiceIdentifier<T> = string | symbol | Newable<T> | Abstract<T>;
 
   export interface Container {
-    bind<T>(serviceIdentifier: ServiceIdentifier<T>): {
-
-    };
+    bind<T>(serviceIdentifier: ServiceIdentifier<T>, to: any): void;
     get<T>(serviceIdentifier: ServiceIdentifier<T>): T;
   }
 }
