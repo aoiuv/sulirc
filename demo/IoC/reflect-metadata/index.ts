@@ -8,5 +8,6 @@
 import 'reflect-metadata';
 import './reflect-decorator';
 import './custom-decorator';
-import './IoC';
 import './typescript-decorator';
+import './IoC';
+import './custom-IoC';

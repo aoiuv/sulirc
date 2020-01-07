@@ -1,36 +1,26 @@
-import 'reflect-metadata';
-import { Weapon, ThrowableWeapon, Warrior } from './interfaces';
+import { TYPES } from './const';
+import { Katana, Shuriken, Ninja } from './entities';
 
-class Katana implements Weapon {
-  public hit() {
-    return 'cut!';
-  }
-}
+type Constructor<T = any> = new (...args: any[]) => T;
+const Container = <T>(target: Constructor<T>) => {
+  const DYNAMIC_INJECT_MAP = {
+    [TYPES.Weapon]: Katana,
+    [TYPES.ThrowableWeapon]: Shuriken,
+    [TYPES.Warrior]: Ninja
+  };
 
-class Shuriken implements ThrowableWeapon {
-  public throw() {
-    return 'hit!';
-  }
-}
+  const providers = [];
+  for (let i = 0; i < target.length; i++) {
+    const paramtypes = Reflect.getMetadata("custom:paramtypes#" + i, target);
+    const provider = DYNAMIC_INJECT_MAP[paramtypes.value];
 
-class Ninja implements Warrior {
-  private _katana: Weapon;
-  private _shuriken: ThrowableWeapon;
-
-  public constructor(katana: Weapon, shuriken: ThrowableWeapon) {
-    this._katana = katana;
-    this._shuriken = shuriken;
+    providers.push(provider);
   }
 
-  public fight() {
-    return this._katana.hit();
-  }
-  public sneak() {
-    return this._shuriken.throw();
-  }
-  // public parameterDecoratorTestFunc(@parameter('#tag') a: boolean) {
-  //   return a;
-  // }
-}
+  return new target(...providers.map(provider => new provider()));
+};
 
+const container = Container(Ninja);
 
+console.log(container.fight());
+console.log(container.sneak());
