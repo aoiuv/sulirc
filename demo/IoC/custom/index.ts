@@ -1,13 +1,18 @@
 import { TYPES } from './const';
 import { Katana, Shuriken, Ninja } from './entities';
+import { Warrior, Weapon, ThrowableWeapon } from './interfaces';
 
 type Constructor<T = any> = new (...args: any[]) => T;
 
 class Container {
   bindTags = {};
 
-  bind(tag: string | symbol, to: Constructor) {
-    this.bindTags[tag] = to;
+  bind<T>(tag: string | symbol) {
+    return {
+      to: (bindTarget: Constructor<T>) => {
+        this.bindTags[tag] = bindTarget;
+      }
+    }
   }
 
   get<T>(tag: string | symbol): T {
@@ -26,9 +31,9 @@ class Container {
 
 const container = new Container();
 
-container.bind(TYPES.Weapon, Katana);
-container.bind(TYPES.ThrowableWeapon, Shuriken);
-container.bind(TYPES.Warrior, Ninja);
+container.bind<Weapon>(TYPES.Weapon).to(Katana);
+container.bind<ThrowableWeapon>(TYPES.ThrowableWeapon).to(Shuriken);
+container.bind<Warrior>(TYPES.Warrior).to(Ninja);
 
 const ninja = container.get<Ninja>(TYPES.Warrior);
 

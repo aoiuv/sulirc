@@ -15,8 +15,20 @@ export function injectable() {
   };
 }
 
-export function inject(serviceIdentifier: interfaces.ServiceIdentifier<any>) {
+// export function inject(serviceIdentifier: interfaces.ServiceIdentifier<any>) {
+//   return function(target: any, propertyKey: string, parameterIndex: number) {
+//     const metadata = {
+//       key: CONST.INJECT_TAG,
+//       value: serviceIdentifier
+//     };
+  
+//     Reflect.defineMetadata(CONST.PARAM_TYPES + `#${parameterIndex}`, metadata, target);
+//   };
+// }
+
+export function inject(serviceIdentifier: string | symbol) {
   return function(target: any, propertyKey: string, parameterIndex: number) {
+    console.log(target, propertyKey, parameterIndex);
     const metadata = {
       key: CONST.INJECT_TAG,
       value: serviceIdentifier
