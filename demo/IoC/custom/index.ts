@@ -2,25 +2,38 @@ import { TYPES } from './const';
 import { Katana, Shuriken, Ninja } from './entities';
 
 type Constructor<T = any> = new (...args: any[]) => T;
-const Container = <T>(target: Constructor<T>) => {
-  const DYNAMIC_INJECT_MAP = {
-    [TYPES.Weapon]: Katana,
-    [TYPES.ThrowableWeapon]: Shuriken,
-    [TYPES.Warrior]: Ninja
-  };
 
-  const providers = [];
-  for (let i = 0; i < target.length; i++) {
-    const paramtypes = Reflect.getMetadata("custom:paramtypes#" + i, target);
-    const provider = DYNAMIC_INJECT_MAP[paramtypes.value];
-
-    providers.push(provider);
+class Container<T> {
+  target: Constructor<T>;
+  bindTags = {};
+  constructor(target: Constructor<T>) {
+    this.target = target;
   }
 
-  return new target(...providers.map(provider => new provider()));
-};
+  bind(tag: string | symbol, to: Constructor) {
+    this.bindTags[tag] = to;
+  }
 
-const container = Container(Ninja);
+  get(): T {
+    const providers = [];
+    const target = this.target;
+    for (let i = 0; i < target.length; i++) {
+      const paramtypes = Reflect.getMetadata('custom:paramtypes#' + i, target);
+      const provider = this.bindTags[paramtypes.value];
 
-console.log(container.fight());
-console.log(container.sneak());
+      providers.push(provider);
+    }
+
+    return new target(...providers.map(provider => new provider()));
+  }
+}
+
+const container = new Container(Ninja);
+
+container.bind(TYPES.Weapon, Katana);
+container.bind(TYPES.ThrowableWeapon, Shuriken);
+
+const ninja = container.get();
+
+console.log(ninja.fight());
+console.log(ninja.sneak());
