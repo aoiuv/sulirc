@@ -32,13 +32,13 @@ export interface ThrowableWeapon {
 ```ts
 export class Katana implements Weapon {
   public hit() {
-    return "cut!";
+    return 'cut!';
   }
 }
 
 export class Shuriken implements ThrowableWeapon {
   public throw() {
-    return "hit!";
+    return 'hit!';
   }
 }
 
@@ -73,9 +73,9 @@ export class Ninja implements Warrior {
 const container = new Container();
 
 const TYPES = {
-  Warrior: Symbol.for("Warrior"),
-  Weapon: Symbol.for("Weapon"),
-  ThrowableWeapon: Symbol.for("ThrowableWeapon")
+  Warrior: Symbol.for('Warrior'),
+  Weapon: Symbol.for('Weapon'),
+  ThrowableWeapon: Symbol.for('ThrowableWeapon')
 };
 
 container.bind<Weapon>(TYPES.Weapon).to(Katana);
@@ -90,7 +90,7 @@ ninja.sneak(); // "hit!"
 
 上面的 Container 实际上接手了对象依赖的管理，使得 Ninja 类脱离了对 Katana 类和 Shuriken 类的依赖！
 
-使得 Ninja 类只依赖抽象的接口（Weapon、ThrowableWeapon）而不是依赖具体的类（Katana、Shuriken）。
+此时 Ninja 类只依赖抽象的接口（Weapon、ThrowableWeapon）而不是依赖具体的类（Katana、Shuriken）。
 
 ## 原理揭秘
 
@@ -103,10 +103,7 @@ export class Ninja implements Warrior {
   private _katana: Weapon;
   private _shuriken: ThrowableWeapon;
 
-  public constructor(
-    @inject(TYPES.Weapon) katana: Weapon,
-    @inject(TYPES.ThrowableWeapon) shuriken: ThrowableWeapon
-  ) {
+  public constructor(@inject(TYPES.Weapon) katana: Weapon, @inject(TYPES.ThrowableWeapon) shuriken: ThrowableWeapon) {
     this._katana = katana;
     this._shuriken = shuriken;
   }
@@ -129,7 +126,7 @@ export class Ninja implements Warrior {
 export function inject(serviceIdentifier: string | symbol) {
   return function(target: any, propertyKey: string, parameterIndex: number) {
     const metadata = {
-      key: "inject.tag",
+      key: 'inject.tag',
       value: serviceIdentifier
     };
 
@@ -174,7 +171,7 @@ IoC 容器的主要功能是什么呢？
 - 类的实例化
 - 查找对象的依赖关系
 
-以下是一个十分简单的 Container 容器。
+以下是一个十分简单的 Container 容器实现代码。
 
 ```ts
 type Constructor<T = any> = new (...args: any[]) => T;
@@ -194,7 +191,7 @@ class Container {
     const target = this.bindTags[tag];
     const providers = [];
     for (let i = 0; i < target.length; i++) {
-      const paramtypes = Reflect.getMetadata("custom:paramtypes#" + i, target);
+      const paramtypes = Reflect.getMetadata('custom:paramtypes#' + i, target);
       const provider = this.bindTags[paramtypes.value];
 
       providers.push(provider);
@@ -204,3 +201,67 @@ class Container {
   }
 }
 ```
+
+bind 方法，主要将所有绑定在容器上依赖建立映射关系。比如以下代码：
+
+```ts
+const container = new Container();
+
+container.bind<Weapon>(TYPES.Weapon).to(Katana);
+container.bind<ThrowableWeapon>(TYPES.ThrowableWeapon).to(Shuriken);
+container.bind<Warrior>(TYPES.Warrior).to(Ninja);
+```
+
+创建容器后，通过 bind 绑定了三个对象，因此容器中形成了（bindTags）以下这样的关系。
+
+```ts
+{
+  [TYPES.Weapon]: Katana,
+  [TYPES.ThrowableWeapon]: Shuriken,
+  [TYPES.Warrior]: Ninja
+}
+```
+
+绑定依赖对象后，我们再结合实例看容器的 get 方法：
+
+```ts
+const ninja = container.get<Ninja>(TYPES.Warrior);
+```
+
+容器的 get 方法通过 tag 参数在 bingTags 映射里，找到目标对象，对应到上述代码也就是，找到了 Ninja 类。
+
+紧接着重头戏来了，我们可以通过 target.length（也就是 function.length）得知 Ninja 类构造函数的参数数量，声明了 providers 数组用于存储 Ninja 类的依赖。还记得一开始我们通过 @inject 在类上添加的两个元数据。此时发挥了重要作用！因此通过元数据即可查找到依赖。
+
+如下：
+
+```ts
+const paramtypes = Reflect.getMetadata('custom:paramtypes#' + i, target);
+const provider = this.bindTags[paramtypes.value];
+```
+
+第一个参数对应 custom:paramtypes#0，paramtypes.value 即为 TYPES.Weapon，此时在 bindTags 查到，找到了 Katana 类依赖！
+
+同理第二个参数也找到了 Shuriken 类依赖。
+
+找到所有在构造函数中声明的依赖后，真正开始注入依赖，如下。
+
+```ts
+return new target(...providers.map(provider => new provider()));
+```
+
+因此最后，通过容器 get 方法，成功得到了注入了依赖的 ninja 实例。
+
+```ts
+ninja.fight(); // "cut!"
+ninja.sneak(); // "hit!"
+```
+
+噌噌噌！正确运行！
+
+## 小结
+
+通过容器管理，类真正做到了依赖抽象的接口，而不是依赖具体的类。践行了 IoC 的思想。
+
+不过上文的 IoC 容器，也只是一个小小的玩具，它所产生的意义主要是引导指示的价值。希望通过此文，可以让大家理解和重视 IoC 的使用。当然笔者也是刚刚学习 IoC，业余时间敲下这个 demo，自己的乐趣和收获也很多~
+
+以上，对大家如有助益，不胜荣幸。
