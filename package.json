@@ -7,7 +7,8 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "demo:ioc": "cd demo/ && tsnd -P ./IoC/tsconfig.json --respawn ./IoC/main.ts"
+    "demo:ioc": "cd demo/IoC && tsnd -P ./tsconfig.json --respawn ./main.ts",
+    "demo:web-server": "cd demo/web-server && tsnd -P ./tsconfig.json --respawn ./main.ts"
   },
   "dependencies": {
     "babel-polyfill": "^6.26.0",
