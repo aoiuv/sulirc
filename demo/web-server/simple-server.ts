@@ -1,13 +1,28 @@
-const http = require('http');
+const http = require("http");
 const server = http.createServer();
 
-server.on('request', (req, res) => {
+function connectType(res, contentType: string, resp: string) {
+  res.setHeader("Content-Type", contentType);
+  res.end(resp);
+}
+
+server.on("request", (req, res) => {
   console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
-  res.setHeader('Content-Type','text/plain');
-  res.end(JSON.stringify({
-    title: 'simple server',
-    text: 'Hello World!'
-  }));
+
+  // console.log("req:", req);
+  // console.log("res:", res);
+
+  connectType(
+    res,
+    // "application/json",
+    "text/plain",
+    JSON.stringify({
+      title: "simple server",
+      text: "Hello World!"
+    })
+  );
+  // connectType(res, "text/css", `a { color: #300; }`);
+  // connectType(res, "text/js", `const f = () => 1;`);
 });
 
 server.listen(3000);
