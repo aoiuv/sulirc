@@ -8,7 +8,8 @@
   "type": "module",
   "scripts": {
     "demo:ioc": "cd demo/IoC && tsnd -P ./tsconfig.json --respawn ./main.ts",
-    "demo:web-server": "cd demo/web-server && tsnd -P ./tsconfig.json --respawn ./main.ts"
+    "demo:web-server": "cd demo/web-server && tsnd -P ./tsconfig.json --respawn ./main.ts",
+    "demo:nodejs": "cd demo/nodejs-action && tsnd -P ./tsconfig.json --respawn ./main.ts"
   },
   "dependencies": {
     "babel-polyfill": "^6.26.0",
