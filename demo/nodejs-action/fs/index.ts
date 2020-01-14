@@ -1,4 +1,5 @@
-// Object.keys(fs)
+import * as fs from 'fs';
+
 [
   "appendFile",
   "appendFileSync",
@@ -91,4 +92,4 @@
 ];
 
 // import './openSync';
-import './stream-copy';
+// import './stream-copy';
