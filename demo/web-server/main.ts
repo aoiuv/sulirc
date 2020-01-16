@@ -1,4 +1,4 @@
-// require('./simple-server');
+require('./simple-server');
 // require('./tcp-server');
 // require('./tcp-server2');
-require('./full-server');
+// require('./full-server');
