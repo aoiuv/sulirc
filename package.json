@@ -9,7 +9,8 @@
   "scripts": {
     "demo:ioc": "cd demo/IoC && tsnd -P ./tsconfig.json --respawn ./main.ts",
     "demo:web-server": "cd demo/web-server && tsnd -P ./tsconfig.json --respawn ./main.ts",
-    "demo:nodejs": "cd demo/nodejs-action && tsnd -P ./tsconfig.json --respawn ./main.ts"
+    "demo:nodejs": "cd demo/nodejs-action && tsnd -P ./tsconfig.json --respawn ./main.ts",
+    "demo:ava": "ava demo/ava/*.js"
   },
   "dependencies": {
     "babel-polyfill": "^6.26.0",
@@ -35,12 +36,36 @@
     "uuid": "^3.3.3"
   },
   "devDependencies": {
+    "@babel/register": "^7.8.3",
     "@babel/cli": "^7.5.0",
     "@babel/core": "^7.5.4",
     "@babel/preset-env": "^7.5.4",
     "@babel/runtime": "^7.7.2",
     "@types/node": "^13.1.2",
+    "ava": "^2.4.0",
     "ts-node-dev": "^1.0.0-pre.44",
     "typescript": "^3.7.4"
+  },
+  "ava": {
+    "files": [
+      "demo/ava/*.js"
+    ],
+    "source": [
+      "**/*.{js,jsx}",
+      "!dist/**/*"
+    ],
+    "failFast": true,
+    "verbose": true,
+    "require": [
+      "@babel/register",
+      "babel-polyfill"
+    ],
+    "babel": {
+      "testOptions": {
+        "presets": [
+          "@babel/preset-env"
+        ]
+      }
+    }
   }
 }
