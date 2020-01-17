@@ -9,3 +9,8 @@ test('bar', async t => {
 
   t.is(await bar, 'bar');
 });
+
+test('1 + 1 = 2', t => {
+  let result: number = 2;
+  t.is(1 + 1, result);
+});

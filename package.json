@@ -10,7 +10,7 @@
     "demo:ioc": "cd demo/IoC && tsnd -P ./tsconfig.json --respawn ./main.ts",
     "demo:web-server": "cd demo/web-server && tsnd -P ./tsconfig.json --respawn ./main.ts",
     "demo:nodejs": "cd demo/nodejs-action && tsnd -P ./tsconfig.json --respawn ./main.ts",
-    "demo:ava": "ava demo/ava/*.js"
+    "demo:ava": "ava demo/ava/*.ts"
   },
   "dependencies": {
     "babel-polyfill": "^6.26.0",
@@ -47,17 +47,13 @@
     "typescript": "^3.7.4"
   },
   "ava": {
-    "files": [
-      "demo/ava/*.js"
-    ],
-    "source": [
-      "**/*.{js,jsx}",
-      "!dist/**/*"
-    ],
+    "compileEnhancements": false,
+    "extensions": ["ts"],
     "failFast": true,
     "verbose": true,
     "require": [
       "@babel/register",
+      "ts-node/register",
       "babel-polyfill"
     ],
     "babel": {
