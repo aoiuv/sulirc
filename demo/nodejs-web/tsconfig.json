@@ -4,6 +4,7 @@
     "lib": ["es6", "DOM"],
     "module": "commonjs",
     "moduleResolution": "node",
-    "downlevelIteration": true
+    "downlevelIteration": true,
+    "allowSyntheticDefaultImports": true,
   }
 }
