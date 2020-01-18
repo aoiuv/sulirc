@@ -30,6 +30,7 @@
     "koa": "^2.7.0",
     "koa-generator": "^1.1.17",
     "koa-router": "^7.4.0",
+    "koa-static": "^5.0.0",
     "lodash": "4.17.14",
     "minimist": "^1.2.0",
     "path-to-regexp": "^6.1.0",
