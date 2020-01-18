@@ -25,6 +25,13 @@ router.get('/cat', (ctx, next) => {
   ctx.body = deepmerge({}, (ctx as any).cat_json);
 });
 
+router.get(/^\/commits\/(\w+)(?:\.\.(\w+))?$/, (ctx, next) => {
+  debug(ctx.params);
+  const from  = ctx.params[0];
+  const to = ctx.params[1] || 'HEAD';
+  ctx.body = `GET commit range ${from} .. ${to}`;
+});
+
 app.use(router.routes()).use(router.allowedMethods());
 
 app.listen(3001);

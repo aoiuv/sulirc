@@ -32,6 +32,7 @@
     "koa-router": "^7.4.0",
     "lodash": "4.17.14",
     "minimist": "^1.2.0",
+    "path-to-regexp": "^6.1.0",
     "ramda": "^0.26.1",
     "redux": "^4.0.4",
     "reflect-metadata": "^0.1.13",
