@@ -1,7 +1,7 @@
 import co from 'co';
+import compose from 'koa-compose';
 
 const debug = require('debug')('web');
-const compose = require('koa-compose');
 
 console.log('ha?');
 

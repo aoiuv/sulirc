@@ -1,4 +1,5 @@
 import co from 'co';
+
 const debug = require('debug')('web');
 
 function* a() {

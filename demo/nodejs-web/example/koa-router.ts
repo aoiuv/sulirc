@@ -1,6 +1,6 @@
-import * as Koa from 'koa';
-import * as Router from 'koa-router';
-import * as deepmerge from 'deepmerge';
+import Koa from 'koa';
+import Router from 'koa-router';
+import deepmerge from 'deepmerge';
 
 const app = new Koa();
 const router = new Router();

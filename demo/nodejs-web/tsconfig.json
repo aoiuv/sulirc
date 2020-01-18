@@ -6,5 +6,6 @@
     "moduleResolution": "node",
     "downlevelIteration": true,
     "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
   }
 }
