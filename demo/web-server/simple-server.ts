@@ -14,8 +14,9 @@ server.on("request", (req, res) => {
 
   connectType(
     res,
-    // "application/json",
-    "text/plain",
+    // "text/json",
+    // "text/plain",
+    'application/octet-stream',
     JSON.stringify({
       title: "simple server",
       text: "Hello World!"

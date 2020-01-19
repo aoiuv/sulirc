@@ -3,6 +3,8 @@
 // import './example/koa-router';
 // import './example/koa-nest-router';
 
-import './example/koa-static';
+// import './example/koa-static';
 
 // import './example/path-to-regexp';
+
+import './example/simple-proxy';

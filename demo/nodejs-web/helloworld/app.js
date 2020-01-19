@@ -11,6 +11,7 @@ const users = require('./routes/users')
 
 // error handler
 onerror(app)
+// debugger;
 
 // middlewares
 app.use(bodyparser({
