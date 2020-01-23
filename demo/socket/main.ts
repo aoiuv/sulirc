@@ -2,7 +2,7 @@
 import Koa from 'koa';
 import Router from 'koa-router';
 import http from 'http';
-// import serve from 'koa-static';
+import serve from 'koa-static';
 import fs from 'fs';
 import path from 'path';
 import createDubug from 'debug';
@@ -13,11 +13,11 @@ const router = new Router();
 const debug = createDubug('socket');
 const chatKey = 'chat message';
 
-// app.use(serve('./static'));
+app.use(serve('./static'));
 
 router.get('/', (ctx, next) => {
   ctx.response.type = 'html';
-  ctx.response.body = fs.createReadStream('./static/index.html');
+  ctx.response.body = fs.createReadStream(path.join(__dirname, './static/index.html'));
 });
 
 app.use(router.routes());
