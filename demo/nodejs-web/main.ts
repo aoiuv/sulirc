@@ -8,8 +8,9 @@
 // import './example/http-request';
 // import './example/path-to-regexp';
 // import './example/simple-proxy';
+import './example/get-post';
 
 // import './practice/url';
 // import './practice/cookie';
 
-import './database/mongo';
+// import './database/mongo';
