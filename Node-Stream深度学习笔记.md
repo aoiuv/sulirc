@@ -6,6 +6,8 @@
 
 ## http.createServer
 
+## crypto
+
 ## split
 
 ## concat-stream

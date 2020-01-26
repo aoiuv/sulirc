@@ -1,0 +1,16 @@
+[
+  {
+    "name": "cyberpunk",
+    "books": [
+      "Neuromancer",
+      "Snow Crash"
+    ]
+  },
+  {
+    "name": "space opera",
+    "books": [
+      "A Deepness in the Sky",
+      "Void"
+    ]
+  }
+]

@@ -53,6 +53,7 @@
     "socket.io": "^2.3.0",
     "split": "^1.0.1",
     "stream-combiner": "^0.2.2",
+    "tar": "^5.0.5",
     "through2": "^3.0.1",
     "tng-hooks": "^4.1.5",
     "trumpet": "^1.7.2",
