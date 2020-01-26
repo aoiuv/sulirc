@@ -45,6 +45,7 @@
     "minimist": "^1.2.0",
     "mongoose": "^5.8.9",
     "path-to-regexp": "^6.1.0",
+    "provinces": "^1.11.0",
     "ramda": "^0.26.1",
     "redux": "^4.0.4",
     "reflect-metadata": "^0.1.13",

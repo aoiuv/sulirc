@@ -21,15 +21,17 @@ function duplexerStream(cmd, args) {
 
 const stream = duplexerStream(cmd, [path.resolve(__dirname, "./command.js"), n]);
 
-stream.write("hello duplexer stream!");
-stream.pipe(
-  concat(function(body) {
-    console.log("FINAL", body.toString("utf8"));
-  })
-);
+// stream.write("hello duplexer stream!");
 
 stream.write("A");
 stream.write("B");
+
+stream.pipe(
+  concat(function(body) {
+    console.log("get concat body:", body.toString("utf8"));
+  })
+);
+
 stream.end();
 
 // stream.pipe(process.stdout);
