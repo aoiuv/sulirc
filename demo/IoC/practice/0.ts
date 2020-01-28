@@ -10,8 +10,9 @@ interface Human {
 const log = console.log.bind(console);
 
 const TYPE = {
+  dracula_name: Symbol.for('dracula.name'),
   dracula: Symbol.for("dracula"),
-  house: Symbol.for("house")
+  house: Symbol.for("house"),
 };
 
 @injectable()
@@ -19,8 +20,8 @@ class Dracula<T extends Human> {
   private slaves: T[] = [];
   private name: string;
 
-  constructor() {
-    this.name = "Count Dracula";
+  constructor(@inject(TYPE.dracula_name) name: string) {
+    this.name = name || "Count Dracula";
   }
 
   transform(slave: T) {
@@ -58,6 +59,7 @@ class House {
 const container = new Container();
 container.bind<Dracula<Human>>(TYPE.dracula).to(Dracula);
 container.bind<House>(TYPE.house).to(House);
+container.bind(TYPE.dracula_name).toConstantValue('Literal Value')
 
 const house: House = container.get(TYPE.house);
 const human: Human[] = [
