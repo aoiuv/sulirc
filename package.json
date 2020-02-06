@@ -12,7 +12,8 @@
     "demo:nodejs": "cd demo/nodejs-action && DEBUG=nodejs tsnd -P ./tsconfig.json --respawn ./main.ts",
     "demo:web": "cd demo/nodejs-web && DEBUG=web tsnd -P ./tsconfig.json --respawn ./main.ts",
     "demo:ava": "DEBUG=ava ava demo/ava/*.ts",
-    "demo:socket": "cd demo/socket && DEBUG=socket tsnd -P ./tsconfig.json --respawn ./main.ts"
+    "demo:socket": "cd demo/socket && DEBUG=socket tsnd -P ./tsconfig.json --respawn ./main.ts",
+    "demo:stream": "cd demo/stream && DEBUG=stream tsnd -P ./tsconfig.json --respawn ./main.ts"
   },
   "dependencies": {
     "ava": "^2.4.0",
