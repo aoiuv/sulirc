@@ -32,6 +32,7 @@ $ cat 浅谈TypeScript下的IoC容器原理.md | grep -o "IoC" | wc -w
 
 ## process.stdin / process.stdout
 
+```
 0 stdin The standard input.
 1 stdout The standard output.
 2 stderr The errors output.
@@ -42,6 +43,8 @@ $ cat 浅谈TypeScript下的IoC容器原理.md | grep -o "IoC" | wc -w
   <    Redirecting input
 <<    [Here documents](http://tldp.org/LDP/abs/html/here-docs.html) syntax
 <<<   [Here strings](http://www.tldp.org/LDP/abs/html/x17837.html)
+
+```
 
 ## fs.createReadStream / fs.createWriteStream
 
