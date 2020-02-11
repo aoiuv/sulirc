@@ -13,7 +13,8 @@
     "demo:web": "cd demo/nodejs-web && DEBUG=web tsnd -P ./tsconfig.json --respawn ./main.ts",
     "demo:ava": "DEBUG=ava ava demo/ava/*.ts",
     "demo:socket": "cd demo/socket && DEBUG=socket tsnd -P ./tsconfig.json --respawn ./main.ts",
-    "demo:stream": "cd demo/stream && DEBUG=stream tsnd -P ./tsconfig.json --respawn ./main.ts"
+    "demo:stream": "cd demo/stream && DEBUG=stream tsnd -P ./tsconfig.json --respawn ./main.ts",
+    "ex:uglify": "cd experiment/uglify && DEBUG=uglify tsnd -P ./tsconfig.json --respawn ./main.ts"
   },
   "dependencies": {
     "ava": "^2.4.0",
@@ -44,6 +45,7 @@
     "koa-send": "^5.0.0",
     "koa-static": "^5.0.0",
     "lodash": "4.17.14",
+    "lzutf8": "^0.5.5",
     "minimist": "^1.2.0",
     "mongodb": "^3.5.2",
     "mongoose": "^5.8.9",
