@@ -5,6 +5,7 @@ export const dragEnd = {
   xAxis: 732,
   yAxis: 275
 };
+// drag.e:86069daa-a660-4f7a-b024-429e68ce4b48:8fd1d343-a272-4eeb-90bc-d5ac0242e5f9:[732,275]
 
 export const dragMove = {
   actionName: "element.common.dragMove",
@@ -15,15 +16,7 @@ export const dragMove = {
 };
 
 export const dragStart = {
-  actionName: "element.common.dragMove",
-  slideId: "86069daa-a660-4f7a-b024-429e68ce4b48",
-  id: "fbb0b458-281a-4d59-89cd-6ce81f2f68d1",
-  xAxis: 416,
-  yAxis: 275
-};
-
-export const setPosition = {
-  actionName: "element.common.dragMove",
+  actionName: "element.common.Start",
   slideId: "86069daa-a660-4f7a-b024-429e68ce4b48",
   id: "fbb0b458-281a-4d59-89cd-6ce81f2f68d1",
   xAxis: 416,

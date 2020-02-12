@@ -1,16 +1,17 @@
-import * as sample from './sample';
-import model from './model';
-import * as util from './util';
+import * as sample from "./sample";
+import * as util from "./util";
+import { compile, interpret } from "./interpret";
 
-const debug = require('debug')('uglify');
-// debug('uglify', sample);
-
+const debug = require("debug")("uglify");
 const stringify = (o: any) => JSON.stringify(o);
-// debug('sample length', stringify(sample).length);
-debug('model length', stringify(model).length);
 
-const rawModelStr = stringify(model);
-const minifyModelStr = util.compress(rawModelStr);
+// debug(sample);
+const code = Object.keys(sample).map(key => {
+  return compile(sample[key]);
+});
+debug('event => code', code);
 
-debug('raw model length', rawModelStr.length);
-debug('minify model length', minifyModelStr.length);
+const event = code.filter(Boolean).map(c => {
+  return interpret(c);
+});
+debug('code => event', event);
