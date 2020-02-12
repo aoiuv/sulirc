@@ -1,11 +1,12 @@
 import * as sample from "./sample";
 import * as util from "./util";
-import { compile, interpret } from "./interpret";
+import { compile, interpret, EventTable, CodeTable } from "./interpret";
 
 const debug = require("debug")("uglify");
 const stringify = (o: any) => JSON.stringify(o);
 
-// debug(sample);
+debug(EventTable);
+debug(CodeTable);
 const code = Object.keys(sample).map(key => {
   return compile(sample[key]);
 });
