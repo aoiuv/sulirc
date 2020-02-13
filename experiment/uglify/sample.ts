@@ -45,3 +45,39 @@ export const penDown = {
   strokeWidth: 3,
   strokeColor: "#FF1000"
 };
+
+export const penMove = {
+  actionName: "penDown",
+  point: {
+    x: 837,
+    y: 643
+  },
+  slideId: "43ebeaaf79bb4f45878693560ce2c708",
+  style: {
+    color: "#FF1000",
+    strokeWidth: 3,
+    opacity: 1,
+    globalCompositeOperation: "source-over"
+  },
+  id: "6f5d7daa-3ec8-463c-a393-006d2eda6dc5",
+  strokeWidth: 3,
+  strokeColor: "#FF1000"
+};
+
+export const penUp = {
+  actionName: "penDown",
+  point: {
+    x: 837,
+    y: 643
+  },
+  slideId: "43ebeaaf79bb4f45878693560ce2c708",
+  style: {
+    color: "#FF1000",
+    strokeWidth: 3,
+    opacity: 1,
+    globalCompositeOperation: "source-over"
+  },
+  id: "6f5d7daa-3ec8-463c-a393-006d2eda6dc5",
+  strokeWidth: 3,
+  strokeColor: "#FF1000"
+};
