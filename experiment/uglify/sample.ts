@@ -47,7 +47,7 @@ export const penDown = {
 };
 
 export const penMove = {
-  actionName: "penDown",
+  actionName: "penMove",
   point: {
     x: 837,
     y: 643
@@ -65,7 +65,7 @@ export const penMove = {
 };
 
 export const penUp = {
-  actionName: "penDown",
+  actionName: "penUp",
   point: {
     x: 837,
     y: 643
