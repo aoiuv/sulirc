@@ -40,7 +40,35 @@ OK。正文开始。
 
 当然，Node 中提供了很多流对象。比如以下的几个主要流对象。
 
-## stdin、stdout、stderr
+## 可写流与可读流
+
+> 可写流是对数据要被写入的目的地的一种抽象。
+
+可写流有以下这些例子：
+
+- 客户端的 HTTP 请求
+- 服务器的 HTTP 响应
+- fs 的写入流
+- zlib 流
+- crypto 流
+- TCP socket
+- 子进程 stdin
+- process.stdout、process.stderr
+
+> 可读流是对提供数据的来源的一种抽象。
+
+可读流有以下这些例子：
+
+- 客户端的 HTTP 响应
+- 服务器的 HTTP 请求
+- fs 的读取流
+- zlib 流
+- crypto 流
+- TCP socket
+- 子进程 stdout 与 stderr
+- process.stdin
+
+## 进程与子进程的 stdin、stdout、stderr
 
 process.stdin、process.stdout、process.stderr 都是双工流。
 
@@ -101,7 +129,28 @@ What's ur name?
 
 这个例子从 stdin 获取标准输入流，从 TALKLIST 中获取回答列表，写入 stdout 标准输出流。
 
-## fs.createReadStream / fs.createWriteStream
+当然我们可以用 transform 流完成上述的工作：
+
+```js
+const stream = require("stream");
+const TALKLIST = {
+  Hello: "Hi~",
+  "What's ur name?": "suri. Nice to meet u!"
+};
+
+const ts = new stream.Transform({
+  transform(chunk, encoding, next) {
+    const key = chunk.toString().trim();
+    const ret = TALKLIST[key];
+    this.push("< " + ret + "\n");
+    next();
+  }
+});
+
+process.stdin.pipe(ts).pipe(process.stdout);
+```
+
+## 文件读取流与写入流
 
 直接读取指定的文件参数，将文件流输出到标准输出流。
 
@@ -115,13 +164,9 @@ $ node process.js ./essay.txt
 Good morning, and in case I don't see ya, good afternoon, good evening, and good night!
 ```
 
-## http.createServer
+## 流对象模式（ObjectMode）
 
-## crypto
-
-## Object mode
-
-Node.js 中的流都是运作在字符串和 Buffer 之上的，如果需要操作对象，我们需要配置参数 objectMode。
+Node.js 中的流是默认接受字符串类型和 Buffer 类型的，如果需要使其接受对象，我们需要配置参数 objectMode。
 
 ```js
 const Writable = require("stream").Writable;
@@ -145,7 +190,11 @@ $ node objectMode.js
 {"y":2}
 ```
 
-# 实践
+## 流动模式（flowing）与暂停模式（paused)
+
+> 开发者通常应该选择其中一种方法来消费数据，不要在单个流使用多种方法来消费数据。 混合使用 on('data')、 on('readable')、 pipe() 或异步迭代器，会导致不明确的行为。
+
+# 关于流的 npm 包
 
 ## split
 
@@ -162,3 +211,4 @@ $ node objectMode.js
 - [stream-handbook](https://github.com/substack/stream-handbook)
 - [[译] 你所需要知道的关于 Node.js Streams 的一切](https://www.yuque.com/afx/blog/node-js-streams-everything-you-need-to-know)
 - [stream adventure](https://github.com/workshopper/stream-adventure)
+- [stream | Node.js API 文档](http://nodejs.cn/api/stream.html#stream_api_for_stream_implementers)
