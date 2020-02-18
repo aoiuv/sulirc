@@ -120,8 +120,6 @@ const fs = require("fs");
 // rs.pause();
 // console.log('readable.readableFlowing', rs.readableFlowing)
 
-
-
 // const { PassThrough, Writable } = require("stream");
 // const pass = new PassThrough();
 // const writable = new Writable();
@@ -139,3 +137,75 @@ const fs = require("fs");
 // console.log('readable.readableFlowing', pass.readableFlowing);
 // pass.resume(); // 必须调用它才会触发 'data' 事件。
 // console.log('readable.readableFlowing', pass.readableFlowing);
+
+/**
+ * 流动与暂停模式
+ */
+// const rs = fs.createReadStream("./essay.txt", { highWaterMark: 3 });
+// rs.on("data", chunk => {
+//   console.log("流动模式", chunk.toString());
+// });
+// // rs.pipe(process.stdout);
+// rs.on("readable", function() {
+//   // 有数据可读取。
+//   let data;
+
+//   while ((data = this.read())) {
+//     console.log("暂停模式", data.toString());
+//   }
+// });
+// rs.on('end', () => {
+//   console.log('结束')
+// })
+// process.nextTick(() => {
+//   rs.destroy();
+// });
+// setTimeout(() => {
+//   rs.destroy();
+//   console.log('readable.destroyed', rs.destroyed);
+// }, 3);
+
+/**
+ * Async Iterator
+ */
+// async function run() {
+//   const rs = fs.createReadStream("./essay.txt", { highWaterMark: 3 });
+//   for await (let chunk of rs) {
+//     console.log('chunk', chunk.toString());
+//   }
+//   console.log('end');
+// }
+// run();
+
+/**
+ * Pipeline
+ */
+// function* generate() {
+//   yield "hello";
+//   yield " stream";
+// }
+// const _stream = stream.Readable.from(generate());
+// stream.pipeline(_stream, process.stdout, error => {
+//   if(error) console.error(error);
+// });
+
+/**
+ * Transfrom.by
+ */
+ const { Transform, pipeline } = require('stream');
+ const { createReadStream, createWriteStream } = require('fs');
+
+ async function* transform (source) {
+    for await(let chunk of source) {
+      yield chunk.toString().toUpperCase();
+    }
+ }
+
+ pipeline(
+   createReadStream('./essay.txt'),
+   transform,
+   process.stdout,
+   (error) => {
+      if(error) console.error(error);
+   }
+ )
