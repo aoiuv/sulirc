@@ -194,6 +194,10 @@ $ node objectMode.js
 
 > 开发者通常应该选择其中一种方法来消费数据，不要在单个流使用多种方法来消费数据。 混合使用 on('data')、 on('readable')、 pipe() 或异步迭代器，会导致不明确的行为。
 
+流动模式（flowing）是推模型（push model）
+
+暂停模式（paused) 是拉模型（pull model）
+
 # 关于流的 npm 包
 
 ## split
@@ -206,7 +210,9 @@ $ node objectMode.js
 
 ## trumpet
 
-## 参考资料
+# 内存泄漏
+
+# 参考资料
 
 - [stream-handbook](https://github.com/substack/stream-handbook)
 - [[译] 你所需要知道的关于 Node.js Streams 的一切](https://www.yuque.com/afx/blog/node-js-streams-everything-you-need-to-know)

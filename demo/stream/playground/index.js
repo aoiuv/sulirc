@@ -1,6 +1,6 @@
-const stream = require("stream");
-const http = require("http");
-const fs = require("fs");
+// const stream = require("stream");
+// const http = require("http");
+// const fs = require("fs");
 
 // const server = http.createServer((req, res) => {
 //   let body = "";
@@ -191,21 +191,50 @@ const fs = require("fs");
 
 /**
  * Transfrom.by
+ * not working
  */
- const { Transform, pipeline } = require('stream');
- const { createReadStream, createWriteStream } = require('fs');
+//  const { Transform, pipeline } = require('stream');
+//  const { createReadStream, createWriteStream } = require('fs');
 
- async function* transform (source) {
-    for await(let chunk of source) {
-      yield chunk.toString().toUpperCase();
-    }
- }
+//  async function* transform (source) {
+//     for await(let chunk of source) {
+//       yield chunk.toString().toUpperCase();
+//     }
+//  }
 
- pipeline(
-   createReadStream('./essay.txt'),
-   transform,
-   process.stdout,
-   (error) => {
-      if(error) console.error(error);
-   }
- )
+//  pipeline(
+//    createReadStream('./essay.txt'),
+//    Transform.by(transform),
+//    process.stdout,
+//    (error) => {
+//       if(error) console.error(error);
+//    }
+//  )
+
+// const fs = require('fs');
+// const zlib = require('zlib');
+// const r = fs.createReadStream('file.txt');
+// const z = zlib.createGzip();
+// const w = fs.createWriteStream('file.txt.gz');
+// r.pipe(z).pipe(w);
+
+// const r = fs.createReadStream('./file.txt.gz');
+// const z = zlib.createGunzip();
+// const w = fs.createWriteStream('./file.unzip.txt');
+
+// r.pipe(z).pipe(w);
+
+const fs = require('fs');
+
+async function print(readable) {
+  readable.setEncoding('utf8');
+  let data = '^';
+  for await (const chunk of readable) {
+    data += chunk + '/';
+  }
+  console.log(data);
+}
+
+print(fs.createReadStream('./file.txt', {
+  highWaterMark: 1
+})).catch(console.error);
