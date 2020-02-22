@@ -218,3 +218,5 @@ $ node objectMode.js
 - [[译] 你所需要知道的关于 Node.js Streams 的一切](https://www.yuque.com/afx/blog/node-js-streams-everything-you-need-to-know)
 - [stream adventure](https://github.com/workshopper/stream-adventure)
 - [stream | Node.js API 文档](http://nodejs.cn/api/stream.html#stream_api_for_stream_implementers)
+
+https://www.computerhope.com/jargon/s/stdout.htm
