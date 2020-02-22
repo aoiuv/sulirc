@@ -1,0 +1,1 @@
+流动模式（flowing）与暂停模式（paused）
