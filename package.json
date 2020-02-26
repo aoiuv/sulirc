@@ -14,6 +14,7 @@
     "demo:ava": "DEBUG=ava ava demo/ava/*.ts",
     "demo:socket": "cd demo/socket && DEBUG=socket tsnd -P ./tsconfig.json --respawn ./main.ts",
     "demo:stream": "cd demo/stream && DEBUG=stream tsnd -P ./tsconfig.json --respawn ./main.ts",
+    "ex:ppm": "cd pull-push-model/ && DEBUG=ppm tsnd -P ./tsconfig.json --respawn ./main.ts",
     "ex:uglify": "cd experiment/uglify && DEBUG=uglify tsnd -P ./tsconfig.json --respawn ./main.ts"
   },
   "dependencies": {
