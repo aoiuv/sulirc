@@ -1,30 +1,52 @@
-async function* Observable() {
-  const ret = await (yield 2);
-  console.log('Hi! ret', ret);
-  yield 3;
-  return 4;
-}
+// var asyncIterable = {
+//   [Symbol.asyncIterator]() {
+//     return {
+//       i: 0,
+//       next() {
+//         if (this.i < 3) {
+//           return Promise.resolve({ value: this.i++, done: false });
+//         }
 
-(async () => {
-  const ob = Observable();
-  const ret = await ob.next();
-  console.log('GET ret', ret);
+//         return Promise.resolve({ done: true });
+//       }
+//     };
+//   }
+// };
 
-  await ob.next(
-    new Promise(resolve => {
-      setTimeout(() => {
-        resolve(Math.random());
-      }, 200);
-    })
-  );
-})();
+// (async function() {
+//   for await (num of asyncIterable) {
+//     console.log(num);
+//   }
+// })();
 
-// console.log(ob);
-// ob.next().then(ret => {
-//   console.log(ret);
-// });
-// ob.next('')
-// for(let k of ob) {
-//   console.log('Ah..', k);
+
+//////////
+
+// function connect() {
+//   return new Promise(r => {
+//     setTimeout(() => {
+//       console.log('Hi~');
+//       r(3);
+//     }, 300);
+//   });
 // }
-// console.log('say hello')
+
+// async function render() {
+//   throw new Error('Error render');
+// }
+
+// Promise.resolve(5)
+//   .then(async v => {
+//     const v2 = await connect();
+//     await render();
+//     console.log(v, v2);
+//     // throw new Error('Error main');
+//   })
+//   .catch(err => {
+//     console.error('Catch error', err);
+//   })
+//   .finally(() => {
+//     console.log('Finally');
+//   });
+
+
