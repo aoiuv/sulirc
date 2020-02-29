@@ -1,4 +1,5 @@
-// import './rxjs';
-import './function';
-import './generator';
+import './rxjs';
+// import './function';
+// import './iterator';
+// import './generator';
 import './promise';
