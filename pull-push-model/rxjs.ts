@@ -1,6 +1,6 @@
-import { Observable } from 'rxjs';
+import * as Rx from "rxjs";
 
-var observable = Observable.create(function (observer) {
+var observable = Rx.Observable.create(function (observer) {
   observer.next(1);
   observer.next(2);
   observer.next(3);
@@ -17,3 +17,4 @@ observable.subscribe({
   complete: () => console.log('done'),
 });
 console.log('just after subscribe');
+
