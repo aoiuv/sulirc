@@ -1,18 +1,20 @@
-export function compose(...funcs: Function[]) {
-  if (funcs.length === 0) {
-    return (arg: any) => arg;
-  }
+// export function compose(...funcs: Function[]) {
+//   if (funcs.length === 0) {
+//     return (arg: any) => arg;
+//   }
 
-  if (funcs.length === 1) {
-    return funcs[0];
-  }
+//   if (funcs.length === 1) {
+//     return funcs[0];
+//   }
 
-  return funcs.reduce(function reducer(a, b) {
-    return function nextWrapper(...args: any[]) {
-      return a(b(...args));
-    };
-  });
-}
+//   return funcs.reduce(function reducer(a, b) {
+//     // console.log('Outside >>>', a.name, b.name);
+//     return function nextWrapper(...args: any[]) {
+//       console.log('Inside >>>', a.name, b.name);
+//       return a(b(...args));
+//     };
+//   });
+// }
 
 export function compose_(middlewares: Function[]) {
   return (context: any) => {
@@ -30,4 +32,17 @@ export function compose_(middlewares: Function[]) {
       }
     }
   };
+}
+
+
+export function compose(...funcs: Function[]) {
+  if (funcs.length === 0) {
+    return (arg: any) => arg;
+  }
+  if (funcs.length === 1) {
+    return funcs[0];
+  }
+  return funcs.reduce((a, b) => {
+    return (...args: any) => a(b(...args));
+  });
 }

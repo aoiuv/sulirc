@@ -3,6 +3,7 @@ class ActionQueue {
   _isActivate: boolean = false;
   push(action: () => Promise<any>) {
     this._queue.push(action);
+    this.check();
   }
   async check() {
     if (this._isActivate) {
