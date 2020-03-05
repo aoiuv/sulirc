@@ -4,4 +4,5 @@
 // import * as AsyncMiddleware from './AsyncMiddleware';
 
 // import './Middleware.playground';
-import './AsyncMiddleware.playground';
+// import './AsyncMiddleware.playground';
+import './curry';
