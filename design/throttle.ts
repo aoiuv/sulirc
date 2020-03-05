@@ -1,4 +1,7 @@
-export function throttle(f: Function, throttleTime: number = 5000) {
+// throttle（节流），当持续触发事件时，保证隔间时间触发一次事件。
+// 持续触发事件时，throttle 会合并一定时间内的事件，并在该时间结束时真正去触发一次事件。
+
+export function throttle(f: Function, throttleTime: number = 300) {
   let canTriggerNewFunc = true;
   return function(...args: any) {
     if (!canTriggerNewFunc) return;
@@ -78,12 +81,12 @@ _.throttle = function(func: Function, wait: number, options: any) {
   };
 };
 
-// let i = 0;
-// const log = (time: any) => {
-//   console.log("throttle log", i++, time);
-// };
+let i = 0;
+const log = (time: any) => {
+  console.log("throttle log", i++, time);
+};
 
-// const throttleLog = throttle(log);
+// const throttleLog = throttle(log, 1000);
 // setInterval(() => {
 //   throttleLog("At time: " + new Date());
 // }, 300);

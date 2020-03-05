@@ -1,8 +1,15 @@
-function debounce(f: Function, debounceTime: number = 500) {
+
+// debounce（防抖），简单来说就是防止抖动。
+// 当持续触发事件时，debounce 会合并事件且不会去触发事件，当一定时间内没有触发再这个事件时，才真正去触发事件。
+
+function debounce(f: Function, debounceTime: number = 500, immediate: boolean = false) {
   let timeout = null;
 
   return function(...args: any) {
     clearTimeout(timeout);
+    if (immediate && !timeout) {
+      f.apply(this, args);
+    }
     timeout = setTimeout(() => {
       f.apply(this, args);
     }, debounceTime);
@@ -61,7 +68,11 @@ const log = (time: any) => {
   console.log("log", i++, time);
 };
 
-const debounceLog = _.debounce(log, 500, true);
-setInterval(() => {
+const debounceLog = debounce(log, 400, true);
+const t = setInterval(() => {
   debounceLog("At time: " + new Date());
 }, 300);
+
+setTimeout(() => {
+  clearInterval(t);
+}, 3000);
