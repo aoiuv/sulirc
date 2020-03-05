@@ -6,9 +6,7 @@ function curry(f: Function) {
     if (_args.length < argsNum) {
       return acc;
     }
-    if (_args.length >= argsNum) {
-      return f(..._args);
-    }
+    return f(..._args);
   };
 }
 
@@ -17,4 +15,8 @@ function add(x: number, y: number, z: number) {
 }
 
 const add3 = curry(add)(3);
-console.log(add3(4, 5));
+// console.log(add3(4, 5));
+console.log(add3()(4)()(5));
+
+const add12 = curry(add)(3, 4);
+console.log(add12(50));

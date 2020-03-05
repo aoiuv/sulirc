@@ -5,4 +5,6 @@
 
 // import './Middleware.playground';
 // import './AsyncMiddleware.playground';
-import './curry';
+// import './curry';
+import './debounce';
+import './throttle';
