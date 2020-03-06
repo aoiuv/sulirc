@@ -230,9 +230,14 @@ class Dog {
   }
 }
 
-Object.setPrototypeOf = function(obj, proto) {
-  obj.__proto__ = proto;
-  return obj;
+// Object.setPrototypeOf = function(obj, proto) {
+//   obj.__proto__ = proto;
+//   return obj;
+// };
+
+(Animal as any).stat = {
+  cap: 'A',
+  id: Symbol.for('id#animal')
 };
 
 // B 的实例继承 A 的实例
@@ -246,3 +251,4 @@ console.log(dog);
 (dog as Animal).eat(5);
 (dog as Animal).play(10);
 console.log(dog);
+console.log((Dog as any).stat);
