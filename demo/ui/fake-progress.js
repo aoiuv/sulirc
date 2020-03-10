@@ -3,17 +3,18 @@ function createFakeProgress({
   minValue = 0,
   maxValue = 100,
   step = 0.1,
-  callback = () => {}
+  complete = () => {}
 }) {
   let progress = minValue;
-  let current_progress = 0;
-  let currentAlgo = "atan";
-  const algo = {
+  let value = 0;
+  let algo = "atan";
+  const increaseAlgo = {
     atan: () => {
-      return Math.round((Math.atan(current_progress) / (Math.PI / 2)) * 100 * 1000) / 1000;
+      return Math.round((Math.atan(value) / (Math.PI / 2)) * 100 * 1000) / 1000;
     },
     linear: () => {
-      const tail = +Math.random().toFixed(3);
+      const factor = 2;
+      const tail = +(Math.random() * factor).toFixed(3);
       return Math.min(maxValue, Math.round(progress + step) + tail);
     }
   };
@@ -22,34 +23,32 @@ function createFakeProgress({
     if (progress === maxValue) {
       clearInterval(interval);
     }
-    callback && callback(progress);
+    complete && complete(progress);
 
-    current_progress += step;
-    progress = algo[currentAlgo]();
+    value += step;
+    progress = increaseAlgo[algo]();
   }, intervalTime);
 
   return () => {
-    currentAlgo = "linear";
+    algo = "linear";
     step = 1;
-    intervalTime = 15;
   };
 }
 
-let delta = [];
+////////////////////////////////
 const complete = createFakeProgress({
-  callback(progress) {
-    console.log(`progress: ${progress}`);
+  complete(progress) {
+    console.log(`progress... ${progress}%`);
     if (progress === 0) {
-      delta.push(Date.now());
+      console.time(`FakeProgress`);
     }
     if (progress === 100) {
-      delta.push(Date.now());
-      console.log(`cost time: ${delta[1] - delta[0]}ms`);
+      console.timeEnd(`FakeProgress`);
     }
   }
 });
 
 setTimeout(() => {
-  console.log(`complete!`, new Date);
+  console.log(`real complete!`, new Date());
   complete();
-}, 6000);
+}, 5000);
