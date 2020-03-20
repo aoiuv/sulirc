@@ -16,7 +16,8 @@
     "demo:stream": "cd demo/stream && DEBUG=stream tsnd -P ./tsconfig.json --respawn ./main.ts",
     "ex:ppm": "cd pull-push-model/ && DEBUG=ppm tsnd -P ./tsconfig.json --respawn ./main.ts",
     "ex:uglify": "cd experiment/uglify && DEBUG=uglify tsnd -P ./tsconfig.json --respawn ./main.ts",
-    "design": "cd design/ && DEBUG=design tsnd -P ./tsconfig.json --respawn ./main.ts"
+    "design": "cd design/ && DEBUG=design tsnd -P ./tsconfig.json --respawn ./main.ts",
+    "s:webpack": "cd plugin-system/webpack && tsnd -P ./tsconfig.json --respawn ./index.ts"
   },
   "dependencies": {
     "ava": "^2.4.0",
@@ -81,6 +82,7 @@
     "@types/mongoose": "^5.5.43",
     "@types/node": "^13.1.2",
     "@types/socket.io": "^2.1.4",
+    "@types/tapable": "^1.0.5",
     "browserify": "^16.5.0",
     "html-webpack-plugin": "^3.2.0",
     "ts-node": "^8.6.2",
