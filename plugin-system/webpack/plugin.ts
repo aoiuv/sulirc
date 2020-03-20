@@ -18,7 +18,7 @@ import {
 interface ICarHook {
   accelerate: SyncHook;
   brake: SyncHook;
-  calculateRoutes: AsyncParallelHook;
+  calculateRoutes: AsyncSeriesHook;
 }
 
 class List {
@@ -40,7 +40,7 @@ class Car {
     this.hooks = {
       accelerate: new SyncHook(['newSpeed']),
       brake: new SyncHook(),
-      calculateRoutes: new AsyncParallelHook(['source', 'target', 'routesList'])
+      calculateRoutes: new AsyncSeriesHook(['source', 'target', 'routesList'])
     };
   }
 
@@ -56,7 +56,7 @@ class Car {
     const routesList = new List();
     return this.hooks.calculateRoutes.promise(source, target, routesList).then(res => {
       const routes = routesList.getRoutes();
-
+      console.log('Total routes: ', routes);
       return routes;
     });
   }
@@ -72,7 +72,6 @@ class Car {
 
 const myCar = new Car();
 
-// Use the tap method to add a consument
 myCar.hooks.brake.tap('WarningLampPlugin', () => console.log('kernel: Warming lamp'));
 myCar.hooks.brake.tap('LoggerPlugin', () => console.log('Brake'));
 myCar.hooks.accelerate.tap('LoggerPlugin', (newSpeed: number) => console.log(`Accelerating to ${newSpeed}`));
@@ -84,14 +83,14 @@ const googleMap = (source: string, target: string) => {
   return new Promise(r => {
     setTimeout(() => {
       r(`Google Map: from ${source} - to ${target}, ` + 'route:random/' + Math.random());
-    }, 200);
+    }, 1000);
   });
 };
 
 const bingMap = (source: string, target: string, callback) => {
   setTimeout(() => {
     callback(null, `Bing Map: from ${source} - to ${target}, ` + 'route:random/' + Math.random());
-  }, 200);
+  }, 1000);
 };
 
 const cacheMap = new Map();
@@ -99,7 +98,7 @@ const cacheMap = new Map();
 myCar.hooks.calculateRoutes.tapPromise('GoogleMapsPlugin', (source, target, routesList) => {
   return googleMap(source, target).then(route => {
     routesList.add(route);
-    console.log('GoogleMapsPlugin', route);
+    console.log('GoogleMapsPlugin' + Date.now(), route);
   });
 });
 
@@ -109,6 +108,7 @@ myCar.hooks.calculateRoutes.tapAsync('BingMapsPlugin', (source, target, routesLi
       return callback(err);
     }
     routesList.add(route);
+    console.log('BingMapsPlugin' + Date.now(), route);
     callback();
   });
 });
@@ -126,5 +126,5 @@ myCar.hooks.calculateRoutes.tap('CachedRoutesPlugin', (source, target, routesLis
   const r1 = await myCar.useNavigationSystemPromise('Guangdong', 'Shenzhen');
   const r2 = await myCar.useNavigationSystemPromise('Hunan', 'Shenzhen');
 
-  console.log(r1, r2);
+  // console.log(r1, r2);
 })();
