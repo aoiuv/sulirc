@@ -56,7 +56,6 @@ class Car {
     const routesList = new List();
     return this.hooks.calculateRoutes.promise(source, target, routesList).then(res => {
       const routes = routesList.getRoutes();
-      console.log('routes', routes);
 
       return routes;
     });
@@ -84,10 +83,18 @@ myCar.setSpeed(100);
 const googleMap = (source: string, target: string) => {
   return new Promise(r => {
     setTimeout(() => {
-      r(`source: ${source} - target: ${target}, ` + 'route:random/' + Math.random());
+      r(`Google Map: from ${source} - to ${target}, ` + 'route:random/' + Math.random());
     }, 200);
   });
 };
+
+const bingMap = (source: string, target: string, callback) => {
+  setTimeout(() => {
+    callback(null, `Bing Map: from ${source} - to ${target}, ` + 'route:random/' + Math.random());
+  }, 200);
+};
+
+const cacheMap = new Map();
 
 myCar.hooks.calculateRoutes.tapPromise('GoogleMapsPlugin', (source, target, routesList) => {
   return googleMap(source, target).then(route => {
@@ -95,27 +102,29 @@ myCar.hooks.calculateRoutes.tapPromise('GoogleMapsPlugin', (source, target, rout
     console.log('GoogleMapsPlugin', route);
   });
 });
+
 myCar.hooks.calculateRoutes.tapAsync('BingMapsPlugin', (source, target, routesList, callback) => {
-  // bing.findRoute(source, target, (err, route) => {
-  // 	if(err) return callback(err);
-  // 	routesList.add(route);
-  // 	// call the callback
-  // 	callback();
-  // });
+  bingMap(source, target, (err, route) => {
+    if (err) {
+      return callback(err);
+    }
+    routesList.add(route);
+    callback();
+  });
 });
 
 // You can still use sync plugins
 myCar.hooks.calculateRoutes.tap('CachedRoutesPlugin', (source, target, routesList) => {
-  // const cachedRoute = cache.get(source, target);
-  // if(cachedRoute)
-  // 	routesList.add(cachedRoute);
+  const key = `${source}-${target}`;
+  const cachedRoute = cacheMap.get(key);
+  if (cachedRoute) {
+    routesList.add(cachedRoute);
+  }
 });
 
 (async () => {
-  const ret = myCar.useNavigationSystemPromise('Guangdong', 'Shenzhen');
-  myCar.useNavigationSystemPromise('Hunan', 'Shenzhen');
+  const r1 = await myCar.useNavigationSystemPromise('Guangdong', 'Shenzhen');
+  const r2 = await myCar.useNavigationSystemPromise('Hunan', 'Shenzhen');
 
-  setTimeout(() => {
-    console.log('ret', ret);
-  }, 1000);
+  console.log(r1, r2);
 })();
