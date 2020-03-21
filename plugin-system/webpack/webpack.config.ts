@@ -9,7 +9,12 @@ const config: webpack.Configuration = {
     path: path.resolve(__dirname, "dist"),
     filename: "app.bundle.js"
   },
-  plugins: [new HtmlWebpackPlugin()]
+  plugins: [
+    new webpack.BannerPlugin({
+      banner: 'by sulirc'
+    }),
+    new HtmlWebpackPlugin()
+  ]
 };
 
 export default config;
