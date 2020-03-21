@@ -20,6 +20,7 @@
     "s:webpack": "cd plugin-system/webpack && tsnd -P ./tsconfig.json --respawn ./index.ts"
   },
   "dependencies": {
+    "@babel/runtime": "^7.7.2",
     "ava": "^2.4.0",
     "axios": "^0.19.2",
     "babel-polyfill": "^6.26.0",
@@ -73,9 +74,9 @@
   "devDependencies": {
     "@babel/cli": "^7.5.0",
     "@babel/core": "^7.5.4",
+    "@babel/plugin-transform-runtime": "^7.9.0",
     "@babel/preset-env": "^7.5.4",
     "@babel/register": "^7.8.3",
-    "@babel/runtime": "^7.7.2",
     "@types/koa": "^2.11.0",
     "@types/koa-router": "^7.4.0",
     "@types/koa-send": "^4.1.2",
