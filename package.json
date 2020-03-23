@@ -17,7 +17,9 @@
     "ex:ppm": "cd pull-push-model/ && DEBUG=ppm tsnd -P ./tsconfig.json --respawn ./main.ts",
     "ex:uglify": "cd experiment/uglify && DEBUG=uglify tsnd -P ./tsconfig.json --respawn ./main.ts",
     "design": "cd design/ && DEBUG=design tsnd -P ./tsconfig.json --respawn ./main.ts",
-    "s:webpack": "cd plugin-system/webpack && tsnd -P ./tsconfig.json --respawn ./index.ts"
+    "s:webpack": "cd plugin-system/webpack && tsnd -P ./tsconfig.json --respawn ./index.ts",
+    "s:dva": "cd plugin-system/dva && tsnd -P ./tsconfig.json --respawn ./index.ts",
+    "s:plugin": "cd plugin-system/_ && tsnd -P ./tsconfig.json --respawn ./index.ts"
   },
   "dependencies": {
     "@babel/runtime": "^7.7.2",
