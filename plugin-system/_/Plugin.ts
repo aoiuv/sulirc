@@ -2,8 +2,7 @@ import invariant from 'invariant';
 
 type Hook = (...args: any) => void;
 type IKernelPlugin<T extends string | symbol> = Record<T, Hook[]>;
-
-export type IPlugin<T extends string | symbol> = Partial<Record<T, Hook | Hook[]>>;
+type IPlugin<T extends string | symbol> = Partial<Record<T, Hook | Hook[]>>;
 
 class Plugin<K extends string> {
   private hooks: IKernelPlugin<K>;
