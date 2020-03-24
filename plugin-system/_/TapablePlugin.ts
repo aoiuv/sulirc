@@ -1,3 +1,4 @@
+import invariant from 'invariant';
 import {
   SyncHook,
   SyncBailHook,
@@ -11,6 +12,36 @@ import {
   HookMap
 } from 'tapable';
 
-class TapablePlugin {}
+export interface IPluginHooks {
+  onError: SyncHook;
+  onAction: AsyncParallelHook;
+  onInit: AsyncSeriesHook;
+}
 
-export default TapablePlugin;
+interface IPlugin {
+  apply: (hooks: IPluginHooks) => void;
+}
+
+class TapablePluginSystem {
+  hooks: IPluginHooks;
+
+  constructor(plugins: IPlugin[] = []) {
+    this.hooks = {
+      onError: new SyncHook(['errMsg']),
+      onAction: new AsyncParallelHook(['action']),
+      onInit: new AsyncSeriesHook()
+    };
+
+    if (~plugins.length) {
+      plugins.forEach(plugin => this.use(plugin));
+    }
+  }
+
+  use(plugin: IPlugin) {
+    invariant(plugin.apply, 'plugin.apply cannot be undefined');
+
+    plugin.apply(this.hooks);
+  }
+}
+
+export default TapablePluginSystem;
