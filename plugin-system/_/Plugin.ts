@@ -1,21 +1,23 @@
 import invariant from 'invariant';
 
 type Hook = (...args: any) => void;
-type IPluginHooks<T extends string | symbol> = Record<T, Hook[]>;
+type IKernelPlugin<T extends string | symbol> = Record<T, Hook[]>;
+
+export type IPlugin<T extends string | symbol> = Partial<Record<T, Hook | Hook[]>>;
 
 class Plugin<K extends string> {
-  hooks: IPluginHooks<K>;
+  private hooks: IKernelPlugin<K>;
 
   constructor(hooks: K[] = []) {
-    invariant(hooks.length, `Plugin hooks empty`);
+    invariant(hooks.length, `plugin.hooks cannot be empty`);
 
     this.hooks = hooks.reduce((memo, key) => {
       memo[key] = [];
       return memo;
-    }, {} as IPluginHooks<K>);
+    }, {} as IKernelPlugin<K>);
   }
 
-  use(plugin: Partial<IPluginHooks<K>>) {
+  use(plugin: IPlugin<K>) {
     const { hooks } = this;
     for (let key in plugin) {
       if (Object.prototype.hasOwnProperty.call(plugin, key)) {
@@ -38,6 +40,13 @@ class Plugin<K extends string> {
         defaultHandler(...args);
       }
     };
+  }
+
+  get(key: K) {
+    const { hooks } = this;
+    invariant(key in hooks, `plugin.get: hook ${key} cannot be got`);
+
+    return hooks[key];
   }
 }
 
