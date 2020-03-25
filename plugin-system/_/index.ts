@@ -58,8 +58,12 @@ class LoggerPlugin {
   }
 
   apply(hooks: IPluginHooks) {
-    hooks.onAction.tapAsync('LoggerPlugin', (action, callback) => {
-      report(`Log from appId: ${this.appId}`, action.type, action.params);
+    const PluginType = 'LoggerPlugin';
+    hooks.onInit.tapPromise(PluginType, () => {
+      return fetch('LOGGER_INIT');
+    });
+    hooks.onAction.tapAsync(PluginType, (action, callback) => {
+      report(`Log action from appId: ${this.appId}`, action.type, action.params);
       fetch('APP_INFO')
         .then(() => callback())
         .catch(err => callback(err));
@@ -75,8 +79,12 @@ class ReportPlugin {
   }
 
   apply(hooks: IPluginHooks) {
-    hooks.onAction.tapAsync('ReportPlugin', (action, callback) => {
-      report(`Report from appId: ${this.appId}`, action.type, action.params);
+    const PluginType = 'ReportPlugin';
+    hooks.onError.tap(PluginType, errMsg => {
+      report(`Report error from appId: ${this.appId}:`, errMsg);
+    });
+    hooks.onAction.tapAsync(PluginType, (action, callback) => {
+      report(`Report action from appId: ${this.appId}:`, action.type, action.params);
       fetch('APP_INFO')
         .then(() => callback())
         .catch(err => callback(err));
@@ -89,8 +97,19 @@ class ReportPlugin {
  */
 (async function TapableApp() {
   const APP_ID = 'a57e41';
-  const system = new TapablePluginSystem([new LoggerPlugin(APP_ID), new ReportPlugin(APP_ID)]);
 
+  /**
+   * 插件声明、注册
+   */
+  const plugins = [new LoggerPlugin(APP_ID), new ReportPlugin(APP_ID)];
+  const system = new TapablePluginSystem(plugins);
+
+  /**
+   * 插件钩子任意时机调用
+   */
+  system.hooks.onInit.promise().then(() => {
+    log('onInit hooks complete');
+  });
   system.hooks.onAction.callAsync(
     {
       type: 'SET_AUTHOR_INFO',
@@ -101,7 +120,10 @@ class ReportPlugin {
         console.error(err);
         return;
       }
-      log('onAction hooks completed');
+      log('onAction hooks complete');
     }
   );
+  // ...
+  system.hooks.onError.call('Fake Error');
+  log('onError hooks complete');
 })();

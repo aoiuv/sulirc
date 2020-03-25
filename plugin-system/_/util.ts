@@ -8,7 +8,7 @@ export function report(...args: any) {
 
 export function fetch(type: string = 'DEFAULT') {
   const fetchTime = Math.ceil(Math.random() * 1000) + 1000;
-  log(`fetch ${type}...`);
+  // log(`fetch ${type}...`);
 
   return new Promise((resolve, reject) => {
     setTimeout(() => {
@@ -21,3 +21,5 @@ export function fetch(type: string = 'DEFAULT') {
     }, fetchTime);
   });
 }
+
+

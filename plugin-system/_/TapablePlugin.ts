@@ -26,6 +26,9 @@ class TapablePluginSystem {
   hooks: IPluginHooks;
 
   constructor(plugins: IPlugin[] = []) {
+    /**
+     * 钩子声明、注册
+     */
     this.hooks = {
       onError: new SyncHook(['errMsg']),
       onAction: new AsyncParallelHook(['action']),
