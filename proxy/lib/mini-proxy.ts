@@ -11,6 +11,7 @@ function MiniProxy(options) {
   this.onBeforeResponse = options.onBeforeResponse || function() {};
   this.onRequestError = options.onRequestError || function() {};
 }
+
 MiniProxy.prototype.start = function() {
   var server = http.createServer();
 
@@ -160,3 +161,17 @@ function _synReply(socket, code, reason, headers, cb) {
 }
 
 module.exports = MiniProxy;
+
+
+// var MiniProxy = require("mini-proxy");
+
+// var myProxy = new MiniProxy({
+// 	"port": 9393,
+// 	"onBeforeRequest": function(requestOptions) {
+// 		console.log("proxy request :" + requestOptions.host +
+// 			    (requestOptions.path || ''));
+// 	}
+// });
+
+// myProxy.start();
+// console.log("proxy start at 9393");
