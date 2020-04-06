@@ -1,9 +1,9 @@
 export function log(...args: any) {
-  return console.log(...args);
+  return console.log(new Date(), ...args);
 }
 
 export function report(...args: any) {
-  return console.log(...args);
+  return console.log(new Date(), ...args);
 }
 
 export function fetch(type: string = 'DEFAULT') {
