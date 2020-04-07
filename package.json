@@ -20,7 +20,8 @@
     "s:webpack": "cd plugin-system/webpack && tsnd -P ./tsconfig.json --respawn ./index.ts",
     "s:dva": "cd plugin-system/dva && tsnd -P ./tsconfig.json --respawn ./index.ts",
     "s:plugin": "cd plugin-system/_ && tsnd -P ./tsconfig.json --respawn ./index.ts",
-    "s:proxy": "cd proxy/ && tsnd -P ./tsconfig.json --respawn ./index.ts"
+    "s:proxy": "cd proxy/ && tsnd -P ./tsconfig.json --respawn ./index.ts",
+    "s:promise": "tsnd -P ./tsconfig.json --respawn ./promise/index.ts"
   },
   "dependencies": {
     "@babel/runtime": "^7.7.2",
