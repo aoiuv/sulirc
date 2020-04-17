@@ -1,8 +1,20 @@
 {
   "compilerOptions": {
+<<<<<<< HEAD
     "module": "commonjs",
     "target": "es5",
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true
   }
 }
+=======
+    "target": "es5",
+    "lib": ["es6", "DOM"],
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "downlevelIteration": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true
+  }
+}
+>>>>>>> a365ca7986a4d8f0ca207c075ce6f7fa2752aee1
