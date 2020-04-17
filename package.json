@@ -20,7 +20,8 @@
     "s:webpack": "cd plugin-system/webpack && tsnd -P ./tsconfig.json --respawn ./index.ts",
     "s:dva": "cd plugin-system/dva && tsnd -P ./tsconfig.json --respawn ./index.ts",
     "s:plugin": "cd plugin-system/_ && tsnd -P ./tsconfig.json --respawn ./index.ts",
-    "s:proxy": "cd proxy/ && tsnd -P ./tsconfig.json --respawn ./index.ts"
+    "s:proxy": "cd proxy/ && tsnd -P ./tsconfig.json --respawn ./index.ts",
+    "fsm": "tsnd -P ./tsconfig.json --respawn ./state-machine/index.ts"
   },
   "dependencies": {
     "@babel/runtime": "^7.7.2",
@@ -72,7 +73,8 @@
     "tng-hooks": "^4.1.5",
     "trumpet": "^1.7.2",
     "uuid": "^3.4.0",
-    "websocket-stream": "^5.5.0"
+    "websocket-stream": "^5.5.0",
+    "xstate": "^4.9.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.5.0",
