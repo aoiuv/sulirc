@@ -21,11 +21,7 @@
     "s:dva": "cd plugin-system/dva && tsnd -P ./tsconfig.json --respawn ./index.ts",
     "s:plugin": "cd plugin-system/_ && tsnd -P ./tsconfig.json --respawn ./index.ts",
     "s:proxy": "cd proxy/ && tsnd -P ./tsconfig.json --respawn ./index.ts",
-<<<<<<< HEAD
-    "fsm": "tsnd -P ./tsconfig.json --respawn ./state-machine/index.ts"
-=======
     "s:promise": "tsnd -P ./tsconfig.json --respawn ./promise/index.ts"
->>>>>>> a365ca7986a4d8f0ca207c075ce6f7fa2752aee1
   },
   "dependencies": {
     "@babel/runtime": "^7.7.2",
