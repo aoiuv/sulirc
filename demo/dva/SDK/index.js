@@ -1,1 +1,0 @@
-const CoreSDK = require('./core');

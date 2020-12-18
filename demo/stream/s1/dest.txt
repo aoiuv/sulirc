@@ -1,4 +1,0 @@
-The char: H char code is 72
-The char: i char code is 105
-The char: ! char code is 33
-:)
