@@ -1,8 +1,4 @@
-🙆‍♂️ 嘿，大家好~ **我的文章都在语雀上更新哦 ✍🏼：[苏里 | 明鱼](https://www.yuque.com/sulirc/sea)**
+Hey y'all, here's sulirc. I'm a Software Engineer at @ByteDance.
 
-🙎‍♂️ 作为一枚前端工程师，技术栈：Nodejs、TypeScript、React、Git、Golang、Python 等
-
-💁‍♂️ 当然除了技术之外，对音乐、素描、文学、心理学、书法等等都有较为浓厚的兴趣，所以博客也会时不时涉及此类内容。
-
-📝 **学习资料整理在 [《苏里查阅手册》](https://www.yuque.com/sulirc/chouti/ny150b)，欢迎大家去戳**
-
+I love reading, coding, learning.
+Recently I am at「self-evolution 🧬」state.
